@@ -1,6 +1,7 @@
 /*
  * Mentions Input
- * Version 1.0.2
+ * Version 1.0.4
+ * (Updated to jQuery 3.7+ and implemented no-conflict mode, integramod.com, December 2024)
  * Written by: Kenneth Auchenberg (Podio)
  *
  * Using underscore.js
@@ -8,7 +9,34 @@
  * License: MIT License - http://www.opensource.org/licenses/mit-license.php
  */
 
-(function ($, _, undefined) {
+(function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['jquery', 'underscore'], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        // Node/CommonJS
+        module.exports = function(root, jQuery, _) {
+            if (jQuery === undefined) {
+                if (typeof window !== 'undefined') {
+                    jQuery = require('jquery');
+                } else {
+                    jQuery = require('jquery')(root);
+                }
+            }
+            if (_ === undefined) {
+                _ = require('underscore');
+            }
+            factory(jQuery, _);
+            return jQuery;
+        };
+    } else {
+        // Browser globals
+        factory(jQuery, _);
+    }
+}(function ($, _, undefined) {
+
+  // Use jQuery.noConflict() to avoid conflicts with other libraries
+  $ = $.noConflict(true);
 
   // Settings
   var KEY = { BACKSPACE : 8, TAB : 9, RETURN : 13, ESC : 27, LEFT : 37, UP : 38, RIGHT : 39, DOWN : 40, COMMA : 188, SPACE : 32, HOME : 36, END : 35 }; // Keys "enum"
@@ -72,7 +100,7 @@
 
     settings = $.extend(true, {}, defaultSettings, settings );
 
-	function initTextarea() {
+    function initTextarea() {
       elmInputBox = $(domInput);
 
       if (elmInputBox.attr('data-mentions-input') == 'true') {
@@ -81,19 +109,19 @@
 
       elmInputWrapper = elmInputBox.parent();
       elmWrapperBox = $(settings.templates.wrapper());
-      elmInputBox.wrapAll(elmWrapperBox);
+      elmInputBox.wrap(elmWrapperBox);
       elmWrapperBox = elmInputWrapper.find('> div');
 
       elmInputBox.attr('data-mentions-input', 'true');
-      elmInputBox.bind('keydown', onInputBoxKeyDown);
-      elmInputBox.bind('keypress', onInputBoxKeyPress);
-      elmInputBox.bind('input', onInputBoxInput);
-      elmInputBox.bind('click', onInputBoxClick);
-      elmInputBox.bind('blur', onInputBoxBlur);
+      elmInputBox.on('keydown', onInputBoxKeyDown);
+      elmInputBox.on('keypress', onInputBoxKeyPress);
+      elmInputBox.on('input', onInputBoxInput);
+      elmInputBox.on('click', onInputBoxClick);
+      elmInputBox.on('blur', onInputBoxBlur);
 
       // Elastic textareas, internal setting for the Dispora guys
-	  /**
-	   * We create elastic by own internal mechanism
+      /**
+       * We create elastic by own internal mechanism
       if( settings.elastic ) {
         elmInputBox.elastic();
       }*/
@@ -103,7 +131,7 @@
     function initAutocomplete() {
       elmAutocompleteList = $(settings.templates.autocompleteList());
       elmAutocompleteList.appendTo(elmWrapperBox);
-      elmAutocompleteList.delegate('li', 'mousedown', onAutoCompleteItemClick);
+      elmAutocompleteList.on('mousedown', 'li', onAutoCompleteItemClick);
     }
 
     function initMentionsOverlay() {
@@ -422,4 +450,4 @@
     });
   };
 
-})(jQuery, _);
+}));

@@ -1,7 +1,7 @@
 /*!
  * jQuery Form Plugin
  * version: 2.86 (08-OCT-2011)
- * @requires jQuery v1.3.2 or later
+ * (Updated to jQuery 3.7+ and implemented no-conflict mode, integramod.com, December 2024)
  *
  * Examples and documentation at: http://malsup.com/jquery/form/
  * Dual licensed under the MIT and GPL licenses:
