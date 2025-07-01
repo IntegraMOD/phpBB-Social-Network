@@ -990,3 +990,4 @@ root/files/.htaccess
 root/images/avatars/upload/.htaccess
 root/includes/.htaccess
 root/store/.htaccess
+.env
