@@ -11,393 +11,400 @@
  * @returns {void}
  */
 (function($, $sn) {
-    $sn.fms = {
-        url: '',
-        urlFMS: '',
-        noFriends: '{ FAS FRIENDGROUP NO TOTAL }',
-        deleteUserGroup: '{ FMS_DELETE_FRIENDUSERGROUP }',
-        deleteUserGroupText: '{ FMS_DELETE_FRIENDUSERGROUP_TEXT }',
-        _init: false,
+	$sn.fms = {
+		url: '',
+		urlFMS: '',
+		noFriends: '{ FAS FRIENDGROUP NO TOTAL }',
+		deleteUserGroup: '{ FMS_DELETE_FRIENDUSERGROUP }',
+		deleteUserGroupText: '{ FMS_DELETE_FRIENDUSERGROUP_TEXT }',
+		_init: false,
 
-        _load: function(m, s, u) {
-            let i_bl = m === 'friends' ? 'friend' : m;
-            $.ajax({
-                url: $sn.fms.url,
-                data: { mode: m, fmsf: s, usr: u },
-                success: function(data) {
-                    $('#ucp_' + i_bl + ' .inner').html(data);
-                    $('.sn-fms-friend span').textOverflow('..');
-                    $sn.fms._runLoadInit(m);
-                }
-            });
-        },
+		_load: function(m, s, u) {
+			var i_bl = m;
+			if (m == 'friends'){
+				i_bl = 'friend';
+			}
+			$.ajax({
+				url: $sn.fms.url,
+				data: {
+					mode: m,
+					fmsf: s,
+					usr: u
+				},
+				success: function(data) {
+					$('#ucp_' + i_bl + ' .inner').html(data);
+					$('.sn-fms-friend span').textOverflow('..');
+					$sn.fms._runLoadInit(m);
+				}
+			});
+		},
 
-        usersLoad: function(m, s, l, u, c, r, p) {
-            const self = this;
-            $.ajax({
-                url: self.urlFMS,
-                data: {
-                    mode: m, fmsf: s, flim: l, usr: u,
-                    chkbx: c, sl: r, pl: p
-                },
-                dataType: 'json',
-                success: function(data) {
-                    if (!r) {
-                        $('#sn-fms-usersBlockPagination-' + m).html(data.pagination);
-                    }
-                    $('#sn-fms-usersBlockContent-' + m).html(data.content);
-                    self.callbackInit(m);
-                }
-            });
-        },
+		usersLoad: function(m, s, l, u, c, r, p) {
+			var self = this;
+			$.ajax({
+				url: self.urlFMS,
+				data: {
+					mode: m,
+					fmsf: s,
+					flim: l,
+					usr: u,
+					chkbx: c,
+					sl: r,
+					pl: p
+				},
+				dataType: 'json',
+				success: function(data) {
 
-        callbackInit: function(mode) {
-            if (this._inits[mode]) {
-                return this._inits[mode].apply(this, Array.prototype.slice.call(arguments, 1));
-            } else if (typeof mode === 'object' || !mode) {
-                return mode.init.apply(this, arguments);
-            }
-        },
-        _inits: {
-            friend: function() {
-                $sn.fms._inits._simple('friend');
-                $sn.fms._inits.group();
-            },
-            approve: function() {
-                $sn.fms._inits._simple('approve');
-            },
-            cancel: function() {
-                $sn.fms._inits._simple('cancel');
-            },
-            group: function() {
-                $('.sn-fms-friendsBlock.ufg .sn-fms-users > div').draggable({
-                    helper: 'clone',
-                    appendTo: 'body',
-                    revert: 'invalid'
-                });
-            },
-            _simple: function(m) {
-                $('#sn-fms-usersBlockContent-' + m)
-                    .parents('form[id^=ucp] .inner')
-                    .children('fieldset.submit-buttons')
-                    .children('input')
-                    .prop('disabled', true)
-                    .addClass('disabled');
-            }
-        },
+					if (!r) {
+						$('#sn-fms-usersBlockPagination-' + m).html(data.pagination);
+					}
+					$('#sn-fms-usersBlockContent-' + m).html(data.content);
+					self.callbackInit(m);
+				}
+			});
+		},
 
-        _groupChange: function(s_sub, i_gid, i_uid, s_gid) {
-            let dt = $.ajax({
-                type: 'POST',
-                url: $sn.fms.url,
-                async: false,
-                cache: false,
-                dataType: 'json',
-                data: {
-                    mode: 'group',
-                    sub: s_sub,
-                    gid: i_gid,
-                    uid: i_uid,
-                    tid: s_gid
-                }
-            }).responseText;
-            dt = $.parseJSON(dt);
-            return dt;
-        },
+		callbackInit: function(mode) {
+			if (this._inits[mode]) {
+				return this._inits[mode].apply(this, Array.prototype.slice.call(arguments, 1));
+			} else if (typeof mode === 'object' || !mode) {
+				return mode.init.apply(this, arguments);
+			}
+		},
 
-        _loadFriends: function(toobj) {
-            if (toobj.html() !== '') return false;
+		_inits: {
+			friend: function() {
+				$sn.fms._inits._simple('friend');
+				$sn.fms._inits.group();
+			},
+			approve: function() {
+				$sn.fms._inits._simple('approve');
+			},
+			cancel: function() {
+				$sn.fms._inits._simple('cancel');
+			},
+			group: function() {
+				$('.sn-fms-friendsBlock.ufg .sn-fms-users > div').draggable({
+					helper: 'clone',
+					appendTo: 'body',
+					revert: 'invalid'
+				});
+			},
+			_simple: function(m) {
+				$('#sn-fms-usersBlockContent-' + m).parents('form[id^=ucp] .inner').children('fieldset.submit-buttons').children('input').attr('disabled', 'disabled').addClass('disabled');
 
-            $.ajax({
-                type: 'POST',
-                url: $sn.fms.urlFMS,
-                dataType: 'json',
-                async: false,
-                data: {
-                    mode: 'friendgroup',
-                    gid: $sn.getAttr(toobj, 'gid')
-                },
-                success: function(data) {
-                    toobj.append(data.content);
-                }
-            });
-        },
-        _changeButtons: function(obj, chCls) {
-            const snFmsButtons = $(obj)
-                .closest('form[id^=ucp]')
-                .find('fieldset.submit-buttons input');
+			}
+		},
 
-            if ($(obj).siblings('.sn-fms-friend.' + chCls).length !== 0) {
-                snFmsButtons.prop('disabled', false).removeClass('disabled');
-            } else {
-                snFmsButtons.prop('disabled', true).addClass('disabled');
-            }
-        },
+		_groupChange: function(s_sub, i_gid, i_uid, s_gid) {
+			var dt = $.ajax({
+				type: 'POST',
+				url: $sn.fms.url,
+				async: false,
+				cache: false,
+				dataType: 'json',
+				data: {
+					mode: 'group',
+					sub: s_sub,
+					gid: i_gid,
+					uid: i_uid,
+					tid: s_gid
+				}
 
-        init: function(opts) {
-            if (!$sn._inited || !$sn.enableModules.fms) return false;
+			}).responseText;
+			dt = $.parseJSON(dt);
+			return dt;
+		},
 
-            $sn._settings(this, opts);
-            this._initUcpFormAdd();
-            this._initUcpForms();
-            this._initUcpHistory();
-            this._initUpGroupMenu();
-            this._initGroupAccordion(); // GROUPS ACCORDION
-        },
+		_loadFriends: function(toobj) {
+			if (toobj.html() != '') {
+				return false;
+			}
 
-        _initUcpFormAdd: function() {
-            const $add = $('form#ucp #add');
-            const $submit = $('form#ucp input[name=submit]');
-            const $reset = $('form#ucp input[name=reset]');
+			$.ajax({
+				type: 'POST',
+				url: $sn.fms.urlFMS,
+				dataType: 'json',
+				async: false,
+				data: {
+					mode: 'friendgroup',
+					gid: $sn.getAttr(toobj, 'gid')
+				},
+				success: function(data) {
+					toobj.append(data.content);
+				}
+			});
+		},
 
-            if ($add.length === 0 || $('#usernames').length !== 0) return;
+		_changeButtons: function(obj, chCls) {
+			var snFmsButtons = $(obj).parents('form[id^=ucp] .inner').children('fieldset.submit-buttons').children('input');
+			if ($(obj).parent().children('.sn-fms-friend.' + chCls).length != 0) {
+				$(snFmsButtons).removeAttr('disabled').removeClass('disabled');
+			} else {
+				$(snFmsButtons).attr('disabled', 'disabled').addClass('disabled');
+			}
+		},
 
-            $add.on('keyup change', function () {
-                if ($(this).val() === '') {
-                    $submit.prop('disabled', true).addClass('disabled');
-                } else {
-                    $submit.prop('disabled', false).removeClass('disabled');
-                }
-            });
+		init: function(opts) {
+			if (!$sn._inited) {
+				return false;
+			}
+			if ($sn.enableModules.fms == undefined || !$sn.enableModules.fms) {
+				return false;
+			}
+			$sn._settings(this, opts);
 
-            $reset.on('click', function () {
-                $submit.prop('disabled', true).addClass('disabled');
-            });
+			this._initUcpFormAdd();
 
-            $('form#ucp').on('mouseover', function () {
-                $add.trigger('keyup');
-            });
+			this._initUcpForms();
+			this._initUcpHistory();
 
-            if ($add.val() === '') {
-                $submit.prop('disabled', true).addClass('disabled');
-            } else {
-                $submit.prop('disabled', false).removeClass('disabled');
-            }
-        },
-        _initUcpForms: function() {
-            const self = this;
+			this._initUpGroupMenu();
+			// GROUPS ACCORDION
+			this._initGroupAccordion();
 
-            if (
-                $('#ucp_friend').length === 0 &&
-                $('#ucp_approve').length === 0 &&
-                $('#ucp_cancel').length === 0
-            ) return;
+		},
 
-            this.callbackInit('friend');
+		_initUcpFormAdd: function() {
+			if ($('form#ucp #add').length == 0 || $('form#ucp #usernames').length != 0) {
+				return;
+			}
 
-            $(document).on('click', '.sn-fms-friend', function() {
-                const chCls = 'checked';
-                $(this).toggleClass(chCls);
-                $(this)
-                    .find('input[type=checkbox]')
-                    .prop('checked', $(this).hasClass(chCls));
-                self._changeButtons(this, chCls);
-            });
+			$('form#ucp #add').bind('keyup change', function() {
+				if ($(this).val() == '') {
+					$('form#ucp input[name=submit]').attr('disabled', 'disabled').addClass('disabled');
+				} else {
+					$('form#ucp input[name=submit]').removeClass('disabled').removeAttr('disabled');
+				}
+			});
+			if ($('form#ucp #add').val() == '') {
+				$('form#ucp input[name=submit]').attr('disabled', 'disabled').addClass('disabled');
+			} else {
+				$('form#ucp input[name=submit]').removeClass('disabled').removeAttr('disabled');
+			}
+			$('form#ucp input[name=reset]').click(function() {
+				$('form#ucp input[name=submit]').attr('disabled', 'disabled').addClass('disabled');
+			});
 
-            $('.sn-fms-friend span').textOverflow('..');
+			$('form#ucp').mouseover(function() {
+				$('form#ucp #add').trigger('keyup');
+			});
 
-            $(document).on('click', '.sn-fms-friend a', function() {
-                window.location = $(this).attr('href');
-                return false;
-            });
+		},
 
-            $('[id^=ucp_] a.mark').on('click', function () {
-                const $s_block = $(this).attr('class').replace('mark ', '');
-                $('#sn-fms-usersBlockContent-' + $s_block + ' .sn-fms-friend')
-                    .addClass('checked')
-                    .find('input[type=checkbox]')
-                    .prop('checked', true);
-                self._changeButtons(
-                    $('#sn-fms-usersBlockContent-' + $s_block + ' .sn-fms-friend'),
-                    'checked'
-                );
-                return false;
-            });
+		_initUcpForms: function() {
+			var self = this;
+			if ($('form[id=ucp_friend]').length == 0 && $('form[id=ucp_approve]').length == 0 && $('form[id=ucp_cancel]').length == 0) {
+        console.log('socialnet m.approval.js: missing #ucp_friend or #ucp_approve or #ucp_cancel forms');
+				return;
+			}
+			this.callbackInit('friend');
+			$(document).on('click', '.sn-fms-friend', function() {
+				var chCls = 'checked';
+				$(this).toggleClass(chCls);
+				$(this).children('input[type=checkbox]').attr('checked', $(this).hasClass(chCls));
 
-            $('[id^=ucp_] a.unmark').on('click', function () {
-                const $s_block = $(this).attr('class').replace('unmark ', '');
-                $('#sn-fms-usersBlockContent-' + $s_block + ' .sn-fms-friend')
-                    .removeClass('checked')
-                    .find('input[type=checkbox]')
-                    .prop('checked', false);
-                self._changeButtons(
-                    $('#sn-fms-usersBlockContent-' + $s_block + ' .sn-fms-friend'),
-                    'checked'
-                );
-                return false;
-            });
+				self._changeButtons(this, chCls);
 
-            $(document).on('click', 'input[type=reset]', function () {
-                $('.sn-fms-friend').removeClass('checked');
-                $('.sn-fms-friend input[type=checkbox]').prop('checked', false);
-            });
-        },
-        _initUcpHistory: function() {
-            $(document).on('click', '.sn-im-history-conversation', function () {
-                window.location = $sn.getAttr($(this), 'u');
-            });
-        },
+			});
+			$('.sn-fms-friend span').textOverflow('..');
 
-        _initGroupAccordion: function() {
-            const self = this;
-            let sortableIn = 0;
+			$(document).on('click', '.sn-fms-friend a', function() {
+				window.location = $(this).attr('href');
+				return false;
+			});
 
-            if ($('#sn-fms-groupAccordion').length === 0) return;
+			$('[id^=ucp_] a.mark').click(function() {
+				var $s_block = $(this).attr('class');
+				$s_block = $s_block.replace('mark ', '');
+				$('#sn-fms-usersBlockContent-' + $s_block + ' .sn-fms-friend').addClass('checked');
+				$('#sn-fms-usersBlockContent-' + $s_block + ' .sn-fms-friend input[type=checkbox]').attr('checked', 'checked');
+				self._changeButtons($('#sn-fms-usersBlockContent-' + $s_block + ' .sn-fms-friend'), 'checked');
+				return false;
+			});
+			$('[id^=ucp_] a.unmark').click(function() {
+				var $s_block = $(this).attr('class');
+				$s_block = $s_block.replace('unmark ', '');
 
-            $('#sn-fms-groupAccordion').accordion({
-                collapsible: false,
-                clearStyle: true,
-                event: 'click',
-                changestart: function (e, ui) {
-                    self._loadFriends(ui.newContent);
-                }
-            });
+				$('#sn-fms-usersBlockContent-' + $s_block + ' .sn-fms-friend').removeClass('checked');
+				$('#sn-fms-usersBlockContent-' + $s_block + ' .sn-fms-friend input[type=checkbox]').removeAttr('checked');
+				self._changeButtons($('#sn-fms-usersBlockContent-' + $s_block + ' .sn-fms-friend'), 'checked');
+				return false;
+			});
+			$(document).on('click', 'input[type=reset]', function() {
+				$('.sn-fms-friend').removeClass('checked');
+				$('.sn-fms-friend input[type=checkbox]').removeAttr('checked');
+			});
 
-            self._loadFriends($('#sn-fms-groupAccordion').children('div').first());
+		},
 
-            $('#sn-fms-groupAccordion > div')
-                .droppable({
-                    drop: function (event, ui) {
-                        const $existing = $(this).find('div[title="' + ui.draggable.attr('title') + '"]');
-                        if ($existing.length > 0) return;
+		_initUcpHistory: function() {
+			$('.sn-im-history-conversation').click(function() {
+				window.location = $sn.getAttr($(this), 'u');
+			});
+		},
 
-                        const i_gid = $sn.getAttr($(this), 'gid');
-                        const i_uid = $sn.getAttr(ui.draggable, 'uid');
-                        const o_cnt = $('h3#sn-fms-grp' + i_gid + '-header span.counter');
-                        const i_cnt = parseInt(o_cnt.text(), 10);
+		_initGroupAccordion: function() {
+			var self = this;
+			// Group Accordion with droppable
+			if ($('#sn-fms-groupAccordion').length == 0) {
+				return;
+			}
 
-                        if (i_cnt === 0) $(this).html('');
-                        $(this).append(ui.draggable.clone().css({ zIndex: 1500, opacity: 1 }));
-                        o_cnt.text(i_cnt + 1);
-                        self._groupChange('add', i_gid, i_uid);
-                    },
-                    activate: function (event, ui) {
-                        ui.draggable.css({ opacity: 0.5 });
-                    },
-                    deactivate: function (event, ui) {
-                        ui.draggable.css({ opacity: 1 });
-                    }
-                })
-                .sortable({
-                    helper: 'clone',
-                    placeholder: 'sn-fms-friend move ui-state-highlight',
-                    start: function (e, ui) {
-                        $('.sn-fms-friend.move.ui-state-highlight').css({
-                            height: ui.item.height() + 'px'
-                        });
-                    },
-                    appendTo: 'body',
-                    receive: function () {
-                        sortableIn = 1;
-                    },
-                    over: function () {
-                        sortableIn = 1;
-                    },
-                    out: function () {
-                        sortableIn = 0;
-                    },
-                    beforeStop: function (e, ui) {
-                        if (sortableIn === 0) {
-                            const i_gid = $sn.getAttr($(this), 'gid');
-                            const i_uid = $sn.getAttr(ui.item, 'uid');
-                            const d_item = ui.item.clone();
+			$('#sn-fms-groupAccordion').accordion({
+				collapsible: false,
+				clearStyle: true,
+				event: "click",
+				changestart: function(e, ui) {
+					self._loadFriends(ui.newContent);
+				}
+			});
+			self._loadFriends($('#sn-fms-groupAccordion').children('div').first());
 
-                            $('body').append(d_item.css({
-                                position: 'absolute',
-                                top: ui.position.top,
-                                left: ui.position.left
-                            }));
+			$('#sn-fms-groupAccordion > div').droppable({
+				drop: function(event, ui) {
+					var $drag = $(this).children('div[title="' + ui.draggable.attr('title') + '"]');
+					if ($drag.length > 0) {
+						return;
+					}
 
-                            ui.item.remove();
-                            $('body > .sn-fms-friend')
-                                .addClass('red')
-                                .effect('explode', {}, 1000)
-                                .remove();
+					var i_gid = $sn.getAttr($(this), 'gid');
+					var i_uid = $sn.getAttr(ui.draggable, 'uid');
+					var o_cnt = $('h3[id=sn-fms-grp' + i_gid + '-header] span.counter');
+					var i_cnt = parseInt(o_cnt.html());
+					if (i_cnt == 0) {
+						$(this).html('');
+					}
+					$(this).append(ui.draggable.clone().css({
+						zIndex: 1500,
+						opacity: 1
+					}));
+					o_cnt.html(i_cnt + 1);
+					self._groupChange('add', i_gid, i_uid);
+				},
+				activate: function(event, ui) {
+					ui.draggable.css({
+						opacity: 0.5
+					});
+				},
+				deactivate: function(event, ui) {
+					ui.draggable.css({
+						opacity: 1
+					});
+				}
+			}).sortable({
+				helper: 'clone',
+				placeholder: 'sn-fms-friend move ui-state-highlight',
+				start: function(e, ui) {
+					$('.sn-fms-friend.move.ui-state-highlight').css({
+						height: ui.item.height() + 'px'
+					});
+				},
+				appendTo: 'body',
+				recieve: function(e, ui) {
+					sortableIn = 1;
+				},
+				over: function(e, ui) {
+					sortableIn = 1;
+				},
+				out: function(e, ui) {
+					sortableIn = 0;
+				},
+				beforeStop: function(e, ui) {
+					if (sortableIn == 0) {
+						var i_gid = $sn.getAttr($(this), 'gid');
+						var i_uid = $sn.getAttr(ui.item, 'uid');
+						var d_item = ui.item.clone();
+						$('body').append(d_item.css({
+							position: 'absolute',
+							top: ui.position.top,
+							left: ui.position.left
+						}));
 
-                            const o_cnt = $('h3#sn-fms-grp' + i_gid + '-header span.counter');
-                            o_cnt.text(parseInt(o_cnt.text(), 10) - 1);
-                            self._groupChange('remove', i_gid, i_uid);
-                        }
-                    },
-                    stop: function () {
-                        const i_gid = $sn.getAttr($(this), 'gid');
-                        const o_cnt = parseInt($('h3#sn-fms-grp' + i_gid + '-header span.counter').text(), 10);
-                        if (o_cnt === 0) {
-                            $(this).html(self.noFriends);
-                        }
-                    }
-                });
-            self.callbackInit('group');
+						ui.item.remove();
+						$('body > .sn-fms-friend').addClass('red').effect('explode', {}, 1000).remove();
+						var o_cnt = $('h3[id=sn-fms-grp' + i_gid + '-header] span.counter');
+						o_cnt.html(parseInt(o_cnt.html()) - 1);
+						self._groupChange('remove', i_gid, i_uid);
+					}
+				},
+				stop: function(e, ui) {
+					var i_gid = $sn.getAttr($(this), 'gid');
+					var o_cnt = parseInt($('h3[id=sn-fms-grp' + i_gid + '-header] span.counter').text());
+					if (o_cnt == 0) {
+						$(this).html(self.noFriends);
+					}
+				}
+			});
 
-            $(document).on('click', '#sn-fms-groupAccordion .sn-fms-groupDelete', function () {
-                const i_gid = $sn.getAttr($(this), 'gid');
-                const $grp = $('#sn-fms-groupAccordion > [id^="sn-fms-grp' + i_gid + '"]');
-                const groupName = $('#sn-fms-groupAccordion > .ui-accordion-header[id^="sn-fms-grp' + i_gid + '"] a')
-                    .text()
-                    .replace(/\([^\(]+\)$/i, '');
+			self.callbackInit('group');
 
-                snConfirmBox(self.deleteUserGroup, self.deleteUserGroupText + '<br /><strong>' + groupName + '</strong>', function () {
-                    $grp.remove();
-                    self._groupChange('delete', i_gid, -1);
-                });
-                return false;
-            });
-        },
+			$('#sn-fms-groupAccordion .sn-fms-groupDelete').click(function() {
+				var i_gid = $sn.getAttr($(this), 'gid');
+				var $grp = $('#sn-fms-groupAccordion > [id^="sn-fms-grp' + i_gid + '"]');
+				snConfirmBox(self.deleteUserGroup, self.deleteUserGroupText + '<br /><strong>' + $('#sn-fms-groupAccordion > .ui-accordion-header[id^="sn-fms-grp' + i_gid + '"] a').html().replace(/\([^\(]+\)$/i, '') + '</strong>', function() {
+					$grp.remove();
+					self._groupChange('delete', i_gid, -1);
+				});
+				return false;
+			});
 
-        _initUpGroupMenu: function () {
-            const self = this;
-            if ($('.sn-up-menu li').length === 0) return;
+		},
 
-            $(document).on('click', '.sn-fms-groups a:not(#sn-fms-grpCreate)', function () {
-                const gid = $sn.getAttr($(this), 'gid');
-                const uid = $sn.getAttr($(this), 'uid');
-                const $icon = $(this).children('.ui-icon');
-                const sub = $icon.hasClass('ui-icon-check') ? 'remove' : 'add';
-                self._groupChange(sub, gid, uid);
-                $icon.toggleClass('ui-icon-check ui-icon-no');
-                return false;
-            });
+		_initUpGroupMenu: function() {
+			var self = this;
+			if ($('.sn-up-menu li').length == 0) {
+				return;
+			}
 
-            $(document).on('click', '.sn-fms-grpCreate .ui-icon', function () {
-                const $text = $('#sn-fms-grpCreateText');
-                const gid = $sn.getAttr($text, 'gid');
-                const uid = $sn.getAttr($text, 'uid');
-                const g_t = $text.val();
-                const data = self._groupChange('create', gid, uid, g_t);
+			$(document).on('click', '.sn-fms-groups a:not( #sn-fms-grpCreate )', function() {
+				var gid = $sn.getAttr($(this), 'gid');
+				var uid = $sn.getAttr($(this), 'uid');
+				var $chld = $(this).children('.ui-icon');
+				var sub = $chld.hasClass('ui-icon-check') ? 'remove' : 'add';
+				self._groupChange(sub, gid, uid);
+				$chld.toggleClass('ui-icon-check ui-icon-no');
+				return false;
+			});
 
-                const selector = 'a[class*="gid:' + data.gid + '"]';
-                if ($(selector).length > 0) {
-                    $(selector).children('.ui-icon').toggleClass('ui-icon-no ui-icon-check');
-                    $text.val('');
-                    return;
-                }
+			$('.sn-fms-grpCreate .ui-icon').click(function() {
+				var $text = $('#sn-fms-grpCreateText');
 
-                const $li = $('<li>', { role: 'menu-item' }).addClass('ui-menu-item');
-                const $a = $('<a>', {
-                    href: '#',
-                    class: `{gid:${data.gid},uid:${data.uid}} ui-corner-all`,
-                    html: '<span class="ui-icon ui-icon-check"></span>' + g_t
-                }).hover(function () {
-                    $(this).toggleClass('ui-state-focus');
-                });
+				var gid = $sn.getAttr($text, 'gid');
+				var uid = $sn.getAttr($text, 'uid');
+				var g_t = $text.val();
+				data = self._groupChange('create', gid, uid, g_t);
 
-                $li.append($a);
-                $('li.sn-fms-grpCreate').before($li);
-                $text.val('');
-            });
+				if ($('a[class*="gid:' + data.gid + '"]').length > 0) {
+					$('a[class*="gid:' + data.gid + '"]').children('.ui-icon').toggleClass('ui-icon-no ui-icon-check');
+					$(this).val('');
+					return;
+				}
 
-            $('#sn-fms-grpCreateText')
-                .watermark($('#sn-fms-grpCreateText').val(), {
-                    useNative: false,
-                    className: 'sn-watermark'
-                })
-                .on('keypress', function (e) {
-                    if (!$sn.isKey(e, $sn.im.opts.sendSequence)) return;
-                    $('.sn-fms-grpCreate .ui-icon').trigger('click');
-                })
-                .on('focusin focusout', function () {
-                    $(this).closest('a#sn-fms-grpCreate').toggleClass('ui-state-active');
-                });
-        }
-    };
+				var ll = $('<li></li>').attr('role', 'menu-item').addClass('ui-menu-item');
+				$('li.sn-fms-grpCreate').before(ll);
+				var la = $('<a href="#" class="{gid:' + data.gid + ',uid:' + data.uid + '} ui-corner-all"><span class="ui-icon ui-icon-check"></span>' + g_t + '</a>').hover(function() {
+					$(this).toggleClass('ui-state-focus');
+				});
+				$(ll).append(la);
+				$text.val('');
+
+			});
+
+			$('#sn-fms-grpCreateText').watermark($('#sn-fms-grpCreateText').val(), {
+				useNative: false,
+				className: 'sn-watermark'
+			}).bind('keypress', function(e) {
+				var code = (e.keyCode ? e.keyCode : e.which);
+
+				if (!$sn.isKey(e, $sn.im.opts.sendSequence)) {
+					return;
+				}
+				$('.sn-fms-grpCreate .ui-icon').trigger('click');
+
+			}).bind('focusin focusout', function() {
+				$(this).parents('a#sn-fms-grpCreate').toggleClass('ui-state-active');
+			});
+		}
+	};
 }(jQuery, socialNetwork));

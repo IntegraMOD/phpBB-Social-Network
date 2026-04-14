@@ -11,460 +11,542 @@
  * @returns {void}
  */
 (function($, $sn) {
-    $sn.us = {
-        loadMoreTime: 4000,
-        watermark: '',
-        emptyStatus: '',
-        watermarkComment: '',
-        emptyComment: '',
-        deleteStatusTitle: '',
-        deleteStatusText: '',
-        deleteActivityTitle: '',
-        deleteActivityText: '',
-        url: './socialnet/userstatus.php',
-        urlFetch: './socialnet/fetch.php',
-        _inited: false,
-        _isScrollingToLoadMore: false,
-        init: function(opts) {
-            if (!$sn._inited || !$sn.enableModules.us) return false;
-            $sn._settings(this, opts);
-            this._resize();
+	$sn.us = {
+		loadMoreTime: 4000,
+		watermark: '',
+		emptyStatus: '',
+		watermarkComment: '',
+		emptyComment: '',
+		deleteStatusTitle: '',
+		deleteStatusText: '',
+		deleteActivityTitle: '',
+		deleteActivityText: '',
+		url: './socialnet/userstatus.php',
+		urlFetch: './socialnet/fetch.php',
+		_inited: false,
+		_isScrollingToLoadMore: false,
+		init: function(opts) {
+			if (!$sn._inited) {
+				return false;
+			}
+			if ($sn.enableModules.us == undefined || !$sn.enableModules.us) {
+				return false;
+			}
+			$sn._settings(this, opts);
 
-            $("#sn-us-wallInput").watermark($sn.us.watermark, {
-                useNative: false,
-                className: 'sn-us-watermark'
-            }).elastic({
-                parentElement: '.sn-us-share',
-                submitElement: '.sn-us-wallButton, .sn-us-fetchButton'
-            }).trigger('blur');
+			this._resize();
 
-            $(document).on('focusin keyup input cut paste', '#sn-us-wallInput', function() {
-                const snUsShare = $(this).val();
-                $(this).closest('.sn-us-share').find('input[name=sn-us-wallButton]').show();
-                if ($sn.isValidURL(snUsShare)) {
-                    $('input[name="sn-us-fetchButton"]').show();
-                } else {
-                    $('input[name="sn-us-fetchButton"]').hide();
-                    $('input[name="sn-us-fetchClear"]').trigger('click');
-                }
-            });
-            // Delete status
-            $(document).on('click', '.sn-us-deleteStatus', function() {
-                const status_id = $sn.getAttr($(this), 'sid');
-                const status = $('#sn-us-status' + status_id).clone();
-                status.find('div.sn-commentsBlock, a.sn-us-commentStatus, span.sn-expander-more, span.sn-expander-less').remove();
+			$("#sn-us-wallInput").watermark($sn.us.watermark, {
+				useNative: false,
+				className: 'sn-us-watermark'
+			});
+      function checkFetchButton() {
+				var snUsShare = $(this).val();
+				$(this).parents('.sn-us-share').children('input[name=sn-us-wallButton]').show();
+				if ($sn.isValidURL(snUsShare) == true) {
+					$('input[name="sn-us-fetchButton"]').show();
+				} else {
+					$('input[name="sn-us-fetchButton"]').hide();
+					$('input[name="sn-us-fetchClear"]').trigger('click');
+				}
+			}
+      $(document).on('focusin keyup input cut paste', '#sn-us-wallInput', checkFetchButton).elastic({
+				parentElement: '.sn-us-share',
+				submitElement: '.sn-us-wallButton, .sn-us-fetchButton'
+			}).trigger('blur');
 
-                snConfirmBox($sn.us.deleteStatusTitle, $sn.us.deleteStatusText + '<hr />' + status.html(), function() {
-                    $.post($sn.us.url, {
-                        smode: 'status_delete',
-                        s_id: status_id
-                    }, function() {
-                        $('#sn-us-status' + status_id).closest('.sn-ap-textBlock').fadeOut('slow').remove();
-                        $('#sn-us-status' + status_id).remove();
-                    });
-                });
+			// Delete status
+			$(document).on('click', ".sn-us-deleteStatus", function() {
+				var status_id = $sn.getAttr($(this), 'sid');
+				var wallid = $sn.getAttr($(this), 'wid');
+				var status = $('#sn-us-status' + status_id).clone();
+				status.find('div.sn-commentsBlock, a.sn-us-commentStatus, span.sn-expander-more, span.sn-expander-less').remove();
 
-                $($sn.confirmBox.dialogID).find('.sn-action-delete').remove();
-            });
+				snConfirmBox($sn.us.deleteStatusTitle, $sn.us.deleteStatusText + '<hr />' + status.html(), function() {
+					$.ajax({
+						type: "POST",
+						url: $sn.us.url,
+						cache: false,
+						data: {
+							smode: 'status_delete',
+							s_id: status_id
+						},
+						success: function(data) {
+							$('#sn-us-status' + status_id).parents('.sn-ap-textBlock').fadeOut('slow').remove();
+							if ($('#sn-us-status' + status_id).length != 0) {
+								$('#sn-us-status' + status_id).remove();
+							}
+						}
+					});
+				});
+				$($sn.confirmBox.dialogID).find('.sn-action-delete').remove();
+			});
 
-            // Delete entry
-            $(document).on('click', '.sn-ap-deleteEntry', function() {
-                const entry_id = $sn.getAttr($(this), 'eid');
+			// Delete entry
+			$(document).on('click', ".sn-ap-deleteEntry", function() {
+				var entry_id = $sn.getAttr($(this), 'eid');
 
-                $.post($sn.us.url, {
-                    smode: 'get_activity',
-                    entry_id: entry_id
-                }, function(data) {
-                    snConfirmBox($sn.us.deleteActivityTitle, $sn.us.deleteActivityText + '<hr />' + data.content, function() {
-                        $.post($sn.us.url, {
-                            smode: 'delete_activity',
-                            entry_id: entry_id
-                        }, function() {
-                            $('#sn-ap-entry' + entry_id).fadeOut('slow').remove();
-                        });
-                    });
-                }, 'json');
-            });
+				$.ajax({
+					type: 'POST',
+					url: $sn.us.url,
+					dataType: 'json',
+					data: {
+						smode: 'get_activity',
+						entry_id: entry_id
+					},
+					success: function(data) {
+						snConfirmBox($sn.us.deleteActivityTitle, $sn.us.deleteActivityText + '<hr />' + data.content, function() {
+							$.ajax({
+								type: "POST",
+								url: $sn.us.url,
+								cache: false,
+								data: {
+									smode: 'delete_activity',
+									entry_id: entry_id
+								},
+								success: function(data) {
+									$('#sn-ap-entry' + entry_id).fadeOut('slow').remove();
+								}
+							});
+						});
+					}
+				});
+			});
 
-            $('.sn-us-fetchData .sn-us-fetchDesc').elastic();
+			$('.sn-us-fetchData .sn-us-fetchDesc').elastic();
 
-            // Share status on Wall
-            $(document).on('click', '.sn-us-share input[name=sn-us-wallButton]', function() {
-                let status_text = $("#sn-us-wallInput").val().trim();
-                if (!status_text || status_text === $sn.us.watermark) {
-                    snConfirmBox($sn.us.emptyStatus, $sn.us.emptyStatus);
-                    $(this).hide();
-                    $('#sn-us-wallInput').val('').trigger('cut');
-                    return;
-                }
+			// Share status on Wall
+			$(document).on('click', '.sn-us-share input[name=sn-us-wallButton]', function() {
+				var status_text = $("#sn-us-wallInput").val();
+				status_text = status_text.replace(/^\s+|\s+$/g, '');
+				if (status_text == '' || status_text == $sn.us.watermark) {
+					snConfirmBox($sn.us.emptyStatus, $sn.us.emptyStatus);
+					$('.sn-us-share input[name=sn-us-wallButton]').hide();
+					$('#sn-us-wallInput').val('').trigger('cut');
 
-                const wall_id = $sn.getAttr($(this), 'wall') || 0;
-                const isPage = $sn.isValidURL(status_text) && $('.sn-us-fetchData .title').html() !== '';
-                const noImg = $('#sn-us-noImg').is(':checked');
-                const noVid = $('#sn-us-noVideo').is(':checked');
-                const $img = $('.sn-us-fetchImgs img:visible');
+				} else {
+					var now = Math.floor(new Date().valueOf() / 1000);
 
-                let mentions = {};
-                if (!$sn.isOutdatedBrowser) {
-                    $('textarea.sn-us-mention').mentionsInput('getMentions', data => mentions = JSON.stringify(data))
-                        .mentionsInput('val', text => status_text = text);
-                }
+					var wall_id = $sn.getAttr($(this), 'wall');
+					if (wall_id == '') {
+						wall_id = 0;
+					}
 
-                $.post($sn.us.url, {
-                    smode: 'status_share_wall',
-                    status: status_text,
-                    mentions: mentions,
-                    wall: wall_id,
-                    isPage,
-                    page: {
-                        title: $('.sn-us-fetchData .title').html(),
-                        url: $('.sn-us-fetchData .url a').attr('href'),
-                        desc: $('.sn-us-fetchData .sn-us-fetchDesc').val(),
-                        image: noImg ? '' : $img.attr('src'),
-                        imageH: noImg ? '' : $sn.getAttr($img, 'imgH'),
-                        imageW: noImg ? '' : $sn.getAttr($img, 'imgW'),
-                        video: noVid ? '' : $('.sn-us-fetchVideo').html(),
-                        videoI: noVid ? '' : $('.sn-us-fetchVideoInfo').html(),
-                        videoP: noVid ? '' : $('.sn-us-fetchVideoProvider').html()
-                    }
-                }, function(data) {
-                    if (!data) {
-                        snConfirmBox($sn.us.emptyStatus, $sn.us.emptyStatus);
-                    } else {
-                        $('.sn-us-noStatus, .sn-ap-noEntry').remove();
-                        if ($('.sn-ap-loadNewsOver').length) {
-                            $(data).hide().insertAfter('.sn-ap-loadNewsOver').slideDown('slow');
-                        } else {
-                            $(data).hide().prependTo('#sn-us-profile').slideDown('slow');
-                        }
-                        $('input[name=sn-us-fetchClear]').trigger('click');
-                        $('input[name=sn-us-fetchButton]').hide();
-                        $sn.comments.waterMark();
-                        $('.sn-us-statusBlock .sn-actions').removeAttr('style');
-                    }
-                    $('#sn-us-wallInput').val('').watermark($sn.us.watermark, {
-                        useNative: false,
-                        className: 'sn-us-watermark'
-                    }).trigger('paste');
-                    $('.sn-us-share .sn-us-wallButton').hide();
-                });
-            });
-            // Show comment input on click
-            $(document).on('click', '.sn-us-commentStatus', function() {
-                const $commentArea = $(this).closest('.sn-us-statusBox').find('.sn-us-inputComment');
-                $commentArea.focus();
-                return false;
-            });
+					var bPage = $sn.isValidURL($('#sn-us-wallInput').val()) && ($('.sn-us-fetchData .title').html() != '') ? 1 : 0;
+					var bImage = $('#sn-us-noImg').is(':checked');
+					var bVideo = $('#sn-us-noVideo').is(':checked');
+					var $cImage = $('.sn-us-fetchImgs img:visible');
 
-            // Toggle comment button visibility
-            $(document).on('focusin', '.sn-us-inputComment', function() {
-                $('.sn-us-buttonCommentOver:visible').hide();
-                $(this).next('.sn-us-buttonCommentOver').show();
-            });
+					var mentions_collection = {};
+					if (!$sn.isOutdatedBrowser) {
+						$('textarea.sn-us-mention').mentionsInput('getMentions', function(data) {
+							mentions_collection = JSON.stringify(data);
+						}).mentionsInput('val', function(text) {
+							status_text = text;
+						});
+					}
 
-            // Post comment
-            $(document).on('click', '.sn-us-shareComment input[name=sn-us-buttonComment]', function() {
-                const status_id = $sn.getAttr($(this), "sid");
-                let commentText = $("#sn-us-textarea" + status_id).val().trim();
+					$.ajax({
+						type: "POST",
+						url: $sn.us.url,
+						cache: false,
+						data: {
+							smode: 'status_share_wall',
+							status: status_text,
+							mentions: mentions_collection,
+							wall: wall_id,
+							isPage: bPage,
+							page: {
+								title: $('.sn-us-fetchData .title').html(),
+								url: $('.sn-us-fetchData .url a').attr('href'),
+								desc: $('.sn-us-fetchData .sn-us-fetchDesc').val(),
+								image: bImage ? '' : $cImage.attr('src'),
+								imageH: bImage ? '' : $sn.getAttr($cImage, 'imgH'),
+								imageW: bImage ? '' : $sn.getAttr($cImage, 'imgW'),
+								video: bVideo ? '' : $('.sn-us-fetchVideo').html(),
+								videoI: bVideo ? '' : $('.sn-us-fetchVideoInfo').html(),
+								videoP: bVideo ? '' : $('.sn-us-fetchVideoProvider').html()
+							}
+						},
+						success: function(data) {
+							if (data == '') {
+								snConfirmBox($sn.us.emptyStatus, $sn.us.emptyStatus);
+							} else {
+								$('.sn-us-noStatus').remove();
+								$('.sn-ap-noEntry').remove();
+								if ($('.sn-ap-loadNewsOver').length != 0) {
+									$(data).hide().insertAfter('.sn-ap-loadNewsOver').slideDown('slow');
+								} else {
+									$(data).hide().prependTo('#sn-us-profile').slideDown('slow');
+								}
+								$('input[name=sn-us-fetchClear]').trigger('click');
+								$('input[name=sn-us-fetchButton]').hide();
+								$sn.comments.waterMark();
+								$('.sn-us-statusBlock .sn-actions').removeAttr('style');
+							}
+							$('#sn-us-wallInput').val('').watermark($sn.us.watermark, {
+								useNative: false,
+								className: 'sn-us-watermark'
+							}).trigger('paste');
+							$('.sn-us-share .sn-us-wallButton').hide();
+						}
+					});
+				}
+			});
 
-                if (!commentText || commentText === $sn.us.watermarkComment) {
-                    snConfirmBox($sn.comments.empty, $sn.comments.empty);
-                    $(this).closest('.sn-us-shareComment').find('.sn-us-inputComment').val('');
-                    return;
-                }
+			// Show and hide the text "Write a comment" && Resize comment textarea
+			$(document).on('click', '.sn-us-commentStatus', function() {
+				var o_commArea = $(this).parents('.sn-us-statusBox').find('.sn-us-inputComment');
+				o_commArea.focus();
+				return false;
+			});
 
-                $.post($sn.us.url, {
-                    smode: 'comment_share',
-                    comment: commentText,
-                    s_id: status_id
-                }, function(data) {
-                    const $container = $(`#sn-us-textarea${status_id}`).closest('.sn-us-shareComment');
-                    if (/^Error:/i.test(data)) {
-                        snConfirmBox('Error', data.replace(/^Error: /i, ''));
-                        $container.closest('.sn-ap-textBlock').remove();
-                    } else if (!data) {
-                        snConfirmBox($sn.comments.empty, $sn.comments.empty);
-                    } else {
-                        $container.before(data);
-                        $container.prev('.sn-us-commentBlock').slideDown();
-                    }
-                    $('.sn-us-buttonCommentOver:visible').hide();
-                    $container.find('.sn-us-inputComment').val('').trigger('paste');
-                    $sn.comments.waterMark();
-                });
-            });
+			$(document).on('focusin', ".sn-us-inputComment", function() {
+				$('.sn-us-buttonCommentOver:visible').hide();
+				$(this).next('.sn-us-buttonCommentOver').show();
+			});
 
-            // Load more comments
-            $(document).on('click', '.sn-us-getMoreComments', function() {
-                const $this = $(this);
-                const $loader = $this.next('.sn-us-commentsLoader').show();
-                const statusID = $sn.getAttr($this, 'id');
-                const userID = $sn.getAttr($this, 'user');
-                const isBefore = $this.hasClass('before');
-                const lastCommentID = $sn.getAttr(
-                    isBefore
-                        ? $this.closest('div.sn-more').prev('.sn-commentBlock')
-                        : $this.closest('div.sn-more').next('.sn-commentBlock'),
-                    'cid'
-                );
+			// Post comment
+			$(document).on('click', ".sn-us-shareComment input[name=sn-us-buttonComment]", function() {
+				var element = $(this);
+				var status_id = $sn.getAttr(element, "sid");
+				var snUsCommentText = $("#sn-us-textarea" + status_id).val();
+				var now = Math.floor(new Date().valueOf() / 1000);
 
-                $.post($sn.us.url, {
-                    smode: 'comment_more',
-                    lCommentID: lastCommentID,
-                    s_id: statusID,
-                    u: userID
-                }, function(data) {
-                    const $target = $('#sn-us-status' + statusID + ' .sn-more');
-                    if (isBefore) {
-                        $target.before(data.comments);
-                    } else {
-                        $target.after(data.comments);
-                    }
-                    $('#sn-us-status' + statusID + ' .sn-us-commentBlock:hidden').show();
-                    if (!data.moreComments) {
-                        $target.remove();
-                    } else {
-                        $this.find('.sn-commentsCount').html(data.moreComments);
-                    }
-                    $loader.hide();
-                }, 'json');
+				snUsCommentText = snUsCommentText.replace(/^\s+|\s+$/g, '');
 
-                return false;
-            });
-            // Load more statuses
-            $(document).on('click', '.sn-us-getMore', function() {
-                if ($('.ui-dialog').is(':visible') || $sn.us._isScrollingToLoadMore) return;
+				if (snUsCommentText == '' || snUsCommentText == $sn.us.watermarkComment) {
+					snConfirmBox($sn.comments.empty, $sn.comments.empty);
+					$(element).parents('.sn-us-shareComment').find('.sn-us-inputComment').val('');
+				} else {
+					$.ajax({
+						type: "POST",
+						url: $sn.us.url,
+						cache: false,
+						data: {
+							smode: 'comment_share',
+							comment: snUsCommentText,
+							s_id: status_id
+						},
+						success: function(data) {
+							var $parr = $(element).parents('.sn-us-shareComment');
+							if (data.match(/^Error:/i)) {
+								snConfirmBox('Error', data.replace(/^Error: /i, ''));
+								element.parents('.sn-ap-textBlock').remove();
+							} else if (data == '') {
+								snConfirmBox($sn.comments.empty, $sn.comments.empty);
+							} else {
+								$parr.before(data);
+								$parr.prev('.sn-us-commentBlock').slideDown();
+							}
+							$('.sn-us-buttonCommentOver:visible').hide();
+							$parr.find('.sn-us-inputComment').val('').trigger('paste');
+							$sn.comments.waterMark();
+						}
+					});
+				}
+			});
 
-                const $this = $(this);
-                const $prev = $this.closest('.sn-more');
-                const $entry = $prev.prev('div[id^=sn-ap-entry]');
-                const lEntry = $sn.getAttr($entry, 't');
+			// Load more comments
+			$(document).on('click', '.sn-us-getMoreComments', function() {
+				var o_loader = $(this).next('.sn-us-commentsLoader');
+				o_loader.show();
 
-                $sn.us._isScrollingToLoadMore = true;
-                $('.sn-us-statusLoader').show();
+				var o_g_m_c = this;
+				var b_last = $(this).hasClass('before');
+				if (b_last) {
+					var lastCommentID = $sn.getAttr($(this).parents('div.sn-more').prev('.sn-commentBlock'), 'cid');
+				} else {
+					var lastCommentID = $sn.getAttr($(this).parents('div.sn-more').next('.sn-commentBlock'), 'cid');
+				}
 
-                $.ajax({
-                    type: 'POST',
-                    cache: false,
-                    url: $sn.us.url,
-                    data: {
-                        smode: 'status_more',
-                        ltime: lEntry,
-                        u: $sn.getAttr($this, 'user')
-                    },
-                    complete: function() {
-                        $('.sn-us-statusLoader').hide();
-                        $sn.us._isScrollingToLoadMore = false;
-                    },
-                    success: function(data) {
-                        $prev.before(data.statuses);
-                        $('div[id^=sn-ap-entry]:hidden').slideDown('slow');
-                        if (!data.moreStatuses) {
-                            $('.sn-more .sn-us-getMore').remove();
-                        }
-                        $sn.comments.waterMark();
-                    }
-                });
-                return false;
-            });
+				var StatusID = $sn.getAttr($(this), 'id');
+				var userID = $sn.getAttr($(this), 'user');
 
-            // Fetch link preview
-            $(document).on('click', 'input[name=sn-us-fetchButton]', function() {
-                const fetchURL = $('#sn-us-wallInput').val();
-                const $preview = $('.sn-us-fetchBlock .sn-us-fetchPreview');
-                const $thumbs = $('.sn-us-thumbs');
+				$.ajax({
+					type: 'POST',
+					cache: false,
+					url: $sn.us.url,
+					data: {
+						smode: 'comment_more',
+						lCommentID: lastCommentID,
+						s_id: StatusID,
+						u: userID
+					},
+					success: function(data) {
+						if (b_last) {
+							$('#sn-us-status' + StatusID + ' .sn-more').before(data.comments);
+						} else {
+							$('#sn-us-status' + StatusID + ' .sn-more').after(data.comments);
+						}
+						$('#sn-us-status' + StatusID + ' .sn-us-commentBlock:hidden').show();
+						if (data.moreComments == false) {
+							$('#sn-us-status' + StatusID + ' .sn-more').remove();
+						} else {
+							$(o_g_m_c).children('.sn-commentsCount').html(data.moreComments);
+						}
+						o_loader.hide();
+					}
+				});
+				return false;
+			});
 
-                $('.sn-us-fetchBlock .loader').show();
-                $preview.hide();
-                $thumbs.hide();
+			// Load more statuses
+			$(document).on('click', '.sn-us-getMore', function() {
+				if ($('.ui-dialog').is(':visible')) {
+					return;
+				}
+				if ($sn.us._isScrollingToLoadMore == true) {
+					return;
+				}
+				var t_obj = $(this);
+				$sn.us._isScrollingToLoadMore = true;
+				var o_prev = t_obj.parents('.sn-more');
+				var i_obj = $(o_prev).prev('div[id^=sn-ap-entry]');
+				var i_lEntry = $sn.getAttr($(i_obj), 't');
+				var i_lStatusID = $sn.getAttr($(this).parents('div.sn-more').prev('.sn-us-statusBlock'), 'sid');
 
-                $.ajax({
-                    type: 'POST',
-                    url: $sn.us.urlFetch,
-                    data: { action: 'load', url: fetchURL },
-                    dataType: 'json',
-                    error: function(data) {
-                        $('input[name=sn-us-fetchClear]').trigger('click');
-                        snConfirmBox('Error', data.responseText);
-                    },
-                    success: function(data) {
-                        if (!data) {
-                            $('input[name=sn-us-fetchClear]').trigger('click');
-                            snConfirmBox('Error', 'No data returned');
-                            return;
-                        }
+				$.ajax({
+					type: 'POST',
+					cache: false,
+					url: $sn.us.url,
+					data: {
+						smode: 'status_more',
+						ltime: i_lEntry,
+						u: $sn.getAttr($(this), 'user')
+					},
+					beforeSubmit: function() {
+						$('.sn-us-statusLoader').show();
+					},
+					error: function() {
+						$('.sn-us-statusLoader').hide();
+						$sn.us._isScrollingToLoadMore = false;
+					},
+					success: function(data) {
+						$('.sn-us-statusLoader').hide();
+						o_prev.before(data.statuses);
+						$('div[id^=sn-ap-entry]:hidden').slideDown('slow');
 
-                        const $imgWrap = $('.sn-us-fetchImgs').empty();
-                        const $imgNav = $('.sn-us-fetchImages .sn-us-fetchThumb');
-                        const hasImgs = data.images.length > 0;
+						if (data.moreStatuses == false) {
+							$('.sn-more .sn-us-getMore').remove();
+						}
+						$sn.comments.waterMark();
+						$sn.us._isScrollingToLoadMore = false;
+					}
+				});
+				return false;
+			});
 
-                        if (hasImgs) {
-                            $.each(data.images, function(i, image) {
-                                const $img = $('<img>', {
-                                    src: image.img,
-                                    id: 'sn-us-fetchPreviewImg_' + i,
-                                    css: {
-                                        display: i === 0 ? 'inline-block' : 'none',
-                                        maxHeight: 150,
-                                        width: 100
-                                    }
-                                });
-                                $imgWrap.append($img);
-                            });
-                            $imgNav.find('.mPic').text(data.images.length);
-                            $('.sn-us-fetchImages, .sn-us-thumbsImg').show();
-                        } else {
-                            $('.sn-us-fetchImages, .sn-us-thumbsImg').hide();
-                        }
+			// Fetch
+			$(document).on('click', 'input[name=sn-us-fetchButton]', function() {
+				$('.sn-us-fetchBlock .loader').show();
+				$('.sn-us-fetchBlock .sn-us-fetchPreview').hide();
+				$('.sn-us-thumbs').hide();
 
-                        $('.sn-us-fetchImages .cPic').text('1');
-                        $('.sn-us-fetchData .title').html(data.title);
-                        $('.sn-us-fetchData .sn-us-fetchDesc').val(data.desc).trigger('paste');
-                        $('.sn-us-fetchData .url a').html(data.url).attr('href', data.url);
+				if ($('#sn-us-wallInput').length > 0) {
+					var fetchURL = $('#sn-us-wallInput').val();
+				}
+				$.ajax({
+					type: 'POST',
+					url: $sn.us.urlFetch,
+					data: {
+						action: 'load',
+						url: fetchURL
+					},
+					dataType: 'json',
+					error: function(data) {
+						$('input[name=sn-us-fetchClear]').trigger('click');
+						snConfirmBox('Error', data.responseText);
+					},
+					success: function(data) {
+						if (data == null) {
+							$('input[name=sn-us-fetchClear]').trigger('click');
+							snConfirmBox('Error', 'No data returned');
+							return;
+						}
+						$('.sn-us-fetchImgs img').remove();
+						if (data.images.length == 0) {
+							$('.sn-us-fetchImages').hide();
+							$('.sn-us-thumbs .sn-us-thumbsImg').hide();
+						} else {
+							var idx_img = 0;
+							$.each(data.images, function(i, image) {
+								var $img = $('<img />', {
+									src: image.img,
+									'class': '{imgH:' + image.height + ',imgW:' + image.width + '}',
+									load: function() {
+										$(this).attr('id', 'sn-us-fetchPreviewImg_' + idx_img).css({
+											display: (idx_img > 0 ? 'none' : 'inline-block'),
+											maxHeight: 150,
+											width: 100
+										});
+										idx_img++;
+										$('.sn-us-fetchImgs').append($img);
+										$('.sn-us-fetchImages .sn-us-fetchThumb .mPic').html(idx_img);
+									}
+								});
+							});
+							$('.sn-us-fetchImages').show();
+							$('.sn-us-thumbs .sn-us-thumbsImg').show();
+						}
 
-                        if (data.video.object.length) {
-                            $('.sn-us-fetchVideo').html(data.video.object).show();
-                            $('.sn-us-thumbsVideo').show();
-                            $('.sn-us-fetchVideoInfo').html(data.video.info);
-                            $('.sn-us-fetchVideoProvider').html(data.video.provider);
-                        } else {
-                            $('.sn-us-fetchVideo, .sn-us-thumbsVideo').hide();
-                        }
+						$('.sn-us-fetchImages .sn-us-fetchThumb .cPic').html('1');
 
-                        $('.sn-us-fetchBlock .loader').hide();
-                        $preview.show();
-                        $thumbs.show();
-                        $('input[name=sn-us-fetchButton]').hide();
-                        $('input[name=sn-us-fetchClear]').show();
-                        $sn.us._resize();
-                        $('.sn-us-fetchDesc').trigger('paste');
-                    }
-                });
-            });
-            // Clear fetch preview
-            $(document).on('click', 'input[name=sn-us-fetchClear]', function() {
-                $('.sn-us-fetchBlock .loader').hide();
-                $('.sn-us-fetchImgs').empty();
-                $('.sn-us-fetchData .title').empty();
-                $('.sn-us-fetchData .sn-us-fetchDesc').empty();
-                $('.sn-us-fetchData .url a').html('').attr('href', '');
-                $('.sn-us-fetchVideo, .sn-us-fetchVideoInfo, .sn-us-fetchVideoProvider').empty();
-                $('.sn-us-fetchBlock .sn-us-fetchPreview, .sn-us-thumbs').hide();
-                $(this).hide();
+						$('.sn-us-fetchData .title').html(data.title);
+						$('.sn-us-fetchData .sn-us-fetchDesc').val(data.desc).trigger('paste');
+						$('.sn-us-fetchData .url a').html(data.url).attr('href', data.url);
 
-                if ($sn.isValidURL($('#sn-us-wallInput').val())) {
-                    $('input[name="sn-us-fetchButton"]').show();
-                }
-            });
+						if (data.video.object.length != 0) {
+							$('.sn-us-fetchVideo').show();
+							$('.sn-us-thumbs .sn-us-thumbsVideo').show();
+						} else {
+							$('.sn-us-fetchVideo').hide();
+							$('.sn-us-thumbs .sn-us-thumbsVideo').hide();
 
-            // Toggle image preview
-            $(document).on('change', '#sn-us-noImg', function() {
-                $('.sn-us-fetchImages .sn-us-fetchImgs, .sn-us-fetchImages .sn-us-fetchImgNav, .sn-us-fetchImages .sn-us-fetchThumb').toggle();
-            });
+						}
+						$('.sn-us-fetchVideo').html(data.video.object);
+						$('.sn-us-fetchVideoInfo').html(data.video.info);
+						$('.sn-us-fetchVideoProvider').html(data.video.provider);
 
-            // Toggle video preview
-            $(document).on('change', '#sn-us-noVideo', function() {
-                $('.sn-us-fetchVideo').toggle();
-            });
+						$('.sn-us-fetchBlock .loader').hide();
+						$('.sn-us-fetchPreview').show();
+						$('.sn-us-thumbs').show();
+						$('input[name=sn-us-fetchButton]').hide();
+						$('input[name=sn-us-fetchClear]').show();
 
-            // Preview navigation
-            $(document).on('click', '.sn-us-fetchImgsNext', function() {
-                $sn.us.changePicture(1);
-            });
-            $(document).on('click', '.sn-us-fetchImgsPrev', function() {
-                $sn.us.changePicture(-1);
-            });
+						$sn.us._resize();
+						$('.sn-us-fetchDesc').trigger('paste');
 
-			// IE < 9 fallback overlay styling
-			if (document.documentMode && document.documentMode < 9) {
-				$('.sn-us-videoOverlay').css({
-					opacity: 0.4,
+					}
+				});
+			}).hide();
+
+			$('.sn-us-fetchData .title').html('');
+			$(document).on('click', 'input[name=sn-us-fetchClear]', function() {
+				$('.sn-us-fetchBlock .loader').hide();
+				$('.sn-us-fetchImgs').html('');
+				$('.sn-us-fetchData .title').html('');
+				$('.sn-us-fetchData .sn-us-fetchDesc').html('');
+				$('.sn-us-fetchData .url a').html('').attr('href', '');
+				$('.sn-us-fetchVideo').html('');
+				$('.sn-us-fetchVideoInfo').html('');
+				$('.sn-us-fetchVideoProvider').html('');
+
+				$('.sn-us-fetchBlock .sn-us-fetchPreview').hide();
+				$('.sn-us-thumbs').hide();
+				$(this).hide();
+				if ($sn.isValidURL($('#sn-us-wallInput').val()) == true) {
+					$('input[name="sn-us-fetchButton"]').show();
+				} else {
+					$('input[name="sn-us-fetchButton"]').hide();
+        }
+			}).hide();
+
+			$('#sn-us-noImg').change(function() {
+				$('.sn-us-fetchImages .sn-us-fetchImgs').toggle();
+				$('.sn-us-fetchImages .sn-us-fetchImgNav').toggle();
+				$('.sn-us-fetchImages .sn-us-fetchThumb').toggle();
+			});
+
+			$('#sn-us-noVideo').change(function() {
+				$('.sn-us-fetchVideo').toggle();
+			});
+
+			$(document).on('click', '.sn-us-fetchImgsNext', function() {
+				$sn.us.changePicture(+1);
+			});
+			$(document).on('click', '.sn-us-fetchImgsPrev', function() {
+				$sn.us.changePicture(-1);
+			});
+
+			if ($.browser.msie && $.browser.version < "9.0") {
+				$('.sn-us-videoOverlay').removeAttr('style').css({
+					opacity: '0.4',
 					background: '#000',
 					width: '150px',
 					height: '150px',
 					position: 'absolute',
+					// marginLeft : '-154px',
 					cursor: 'pointer'
 				});
 			}
+			$(document).on('click', '.sn-us-videoOverlay', function() {
+				var obj = $(this).prev('div.sn-us-page-Video').children('object');
+				var emb = $(obj).children('embed');
+				$(this).parent('.sn-us-page-Preview').next('.clear').removeAttr('style').show();
 
-            // Enable embedded video on overlay click
-            $(document).on('click', '.sn-us-videoOverlay', function() {
-                const $obj = $(this).prev('div.sn-us-page-Video').children('object');
-                const $embed = $obj.children('embed');
-                $(this).parent('.sn-us-page-Preview').next('.clear').show();
+				$(this).attr({
+					height: $(obj).attr('height'),
+					width: $(obj).attr('width')
+				});
+				$(emb).css({
+					height: $(obj).attr('height'),
+					width: $(obj).attr('width')
+				}).removeAttr('style');
+				$(obj).removeAttr('style');
+				$(this).removeAttr('style');
+				$(this).hide();
+			});
 
-                $(this).add($embed).css({
-                    height: $obj.attr('height'),
-                    width: $obj.attr('width')
-                });
-                $obj.add(this).removeAttr('style');
-                $(this).hide();
-            });
-            $sn.comments.init();
+			$sn.comments.init();
+			if (!$sn.isOutdatedBrowser) {
+				$('textarea.sn-us-mention').mentionsInput({
+					templates: {
+						wrapper: _.template('<div class="sn-us-mentions-input-box"></div>'),
+						autocompleteList: _.template('<div class="sn-us-mentions-autocomplete-list"></div>'),
+						mentionsOverlay: _.template('<div class="sn-us-mentions"><div></div></div>')
+					},
+					onDataRequest: function(mode, query, callback) {
+						$.getJSON($sn.us.url, {
+							smode: 'get_mention',
+							uname: query
+						}, function(data) {
+							data = _.filter(data, function(item) {
+								return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1;
+							});
+							callback.call(this, data);
+						});
+					}
+				});
+			}
+		},
+		changePicture: function(dir) {
+			var c_pic = parseInt($('.sn-us-fetchImgs img:visible').attr('id').replace(/^sn-us-fetchPreviewImg_/i, ''));
 
-            if (!$sn.isOutdatedBrowser) {
-                $('textarea.sn-us-mention').mentionsInput({
-                    templates: {
-                        wrapper: _.template('<div class="sn-us-mentions-input-box"></div>'),
-                        autocompleteList: _.template('<div class="sn-us-mentions-autocomplete-list"></div>'),
-                        mentionsOverlay: _.template('<div class="sn-us-mentions"><div></div></div>')
-                    },
-                    onDataRequest: function(mode, query, callback) {
-                        $.getJSON($sn.us.url, { smode: 'get_mention', uname: query }, function(data) {
-                            const results = _.filter(data, item =>
-                                item.name.toLowerCase().indexOf(query.toLowerCase()) > -1
-                            );
-                            callback.call(this, results);
-                        });
-                    }
-                });
-            }
-        },
+			if (c_pic + dir < 0) {
+				var c_pic = parseInt($('.sn-us-fetchImgs img').length);
+			} else if (c_pic + dir >= parseInt($('.sn-us-fetchImgs img').length)) {
+				var c_pic = -1;
+			}
+			$('.sn-us-fetchImgs img:visible').hide();
+			$('#sn-us-fetchPreviewImg_' + (c_pic + dir)).show();
+			$('.sn-us-fetchImages .sn-us-fetchThumb .cPic').html((c_pic + dir + 1));
+		},
+		_resize: function() {
+			$('#sn-us').css({
+				left: (($(document).width() - $('#sn-us').width()) / 2) + 'px'
+			});
 
-        changePicture: function(dir) {
-            let c_pic = parseInt($('.sn-us-fetchImgs img:visible').attr('id').replace(/^sn-us-fetchPreviewImg_/, ''));
-            const total = $('.sn-us-fetchImgs img').length;
+			$('.sn-us-fetchDesc').css({
+				width: $('.sn-us-fetchData').width() - $('.sn-us-fpreviews').width() - 2 * parseInt($('.sn-us-fpreviews').css('padding-right')) - 2 * parseInt($('.sn-us-fpreviews').css('padding-left'))
+			});
+		},
+		_scroll: function() {
+			if ($('.sn-more').length > 0 && $('.sn-us-getMore').length > 0 && $sn.ap._isScrollingToLoadMore == false) {
 
-            if (c_pic + dir < 0) c_pic = total;
-            else if (c_pic + dir >= total) c_pic = -1;
+				if ($(window).scrollTop() >= $('.sn-us-getMore').offset().top - $(window).height() + $('.sn-us-getMore').parent().height()) {
 
-            $('.sn-us-fetchImgs img:visible').hide();
-            $('#sn-us-fetchPreviewImg_' + (c_pic + dir)).show();
-            $('.sn-us-fetchImages .cPic').text(c_pic + dir + 1);
-        },
+					$(document).oneTime($sn.us.loadMoreTime, 'sn-us-checkScrollDown', function() {
+						if ($('.sn-us-getMore').length == 0 || $sn.ap._isScrollingToLoadMore == true) {
+							return;
+						}
 
-        _resize: function() {
-            $('#sn-us').css({
-                left: (($(document).width() - $('#sn-us').width()) / 2) + 'px'
-            });
-
-            $('.sn-us-fetchDesc').css({
-                width:
-                    $('.sn-us-fetchData').width()
-                    - $('.sn-us-fpreviews').width()
-                    - 2 * parseInt($('.sn-us-fpreviews').css('padding-right'))
-                    - 2 * parseInt($('.sn-us-fpreviews').css('padding-left'))
-            });
-        },
-
-        _scroll: function() {
-            if (
-                $('.sn-more').length &&
-                $('.sn-us-getMore').length &&
-                !$sn.ap._isScrollingToLoadMore &&
-                $(window).scrollTop() >= $('.sn-us-getMore').offset().top - $(window).height()
-                    + $('.sn-us-getMore').parent().height()
-            ) {
-                $(document).oneTime($sn.us.loadMoreTime, 'sn-us-checkScrollDown', function() {
-                    if (!$('.sn-us-getMore').length || $sn.ap._isScrollingToLoadMore) return;
-                    if (
-                        $(window).scrollTop() >= $('.sn-us-getMore').offset().top - $(window).height()
-                        + $('.sn-us-getMore').parent().height()
-                    ) {
-                        $('.sn-us-getMore').trigger('click');
-                    }
-                });
-            }
-        }
-    };
+						if ($(window).scrollTop() >= $('.sn-us-getMore').offset().top - $(window).height() + $('.sn-us-getMore').parent().height()) {
+							$('.sn-us-getMore').trigger('click');
+						}
+					});
+				}
+			}
+		}
+	};
 }(jQuery, socialNetwork));

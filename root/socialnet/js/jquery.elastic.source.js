@@ -2,7 +2,7 @@
  * @name Elastic
  * @descripton Elastic is jQuery plugin that grow and shrink your textareas automatically
  * @version 1.6.11
- * @requires jQuery 3.7.1+
+ * @requires jQuery 1.2.6+
  * 
  * @author Jan Jarfalk
  * @author-email jan.jarfalk@unwrongest.com
@@ -18,133 +18,171 @@
  */
 
 (function($) {
-    jQuery.fn.extend({
-        elastic: function(opts) {
-            var mimics = [
-                'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
-                'fontSize', 'lineHeight', 'fontFamily', 'width', 'fontWeight',
-                'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
-                'borderTopStyle', 'borderTopColor', 'borderRightStyle', 'borderRightColor',
-                'borderBottomStyle', 'borderBottomColor', 'borderLeftStyle', 'borderLeftColor'
-            ];
+	jQuery.fn.extend({
+		elastic : function(opts) {
 
-            var defaults = {
-                showNewLine: true,
-                useEnter: true,
-                enterReplacement: '<br />',
-                parentElement: null,
-                submitElement: null
-            };
+			// We will create a div clone of the textarea by copying these attributes from the textarea to the div.
+			var mimics = [ 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'fontSize', 'lineHeight', 'fontFamily', 'width', 'fontWeight', 'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width', 'borderTopStyle', 'borderTopColor', 'borderRightStyle', 'borderRightColor', 'borderBottomStyle', 'borderBottomColor', 'borderLeftStyle', 'borderLeftColor' ];
 
-            defaults = $.extend(true, {}, defaults, opts);
+			var defaults = {
+				showNewLine: true,
+				useEnter : true,
+				enterReplacement : '<br />',
+				parentElement: null,
+				submitElement: null
+			}
 
-            if (!defaults.useEnter) {
-                defaults.enterReplacement = '';
-            }
+			defaults = $.extend(true, {}, defaults, opts);
 
-            return this.each(function() {
-                if (this.type !== 'textarea') return false;
-                if (this.dataElastic === 'elastic') return false;
+			if (!defaults.useEnter) {
+				defaults.enterReplacement = '';
+			}
 
-                var $textarea = $(this),
-                    $twin = $('<div />').css({
-                        position: 'absolute',
-                        display: 'none',
-                        wordWrap: 'break-word',
-                        whiteSpace: 'pre-wrap'
-                    }),
-                    lineHeight = parseInt($textarea.css('line-height'), 10) || parseInt($textarea.css('font-size'), 10),
-                    minheight = parseInt($textarea.css('height'), 10) || lineHeight * 3,
-                    maxheight = parseInt($textarea.css('max-height'), 10) || Number.MAX_VALUE;
+			return this.each(function() {
 
-                if (maxheight < 0) maxheight = Number.MAX_VALUE;
+				// Elastic only works on textareas
+				if (this.type !== 'textarea') {
+					return false;
+				}
 
-                $textarea.canBlur = true;
-                $textarea.parentElement = defaults.parentElement;
-                $textarea.submitElement = defaults.submitElement;
+				// Elastic only works on non initialized objects
+				if (this.dataElastic === 'elastic') {
+					return false;
+				}
 
-                $textarea.parents($textarea.parentElement).find($textarea.submitElement)
-                    .on('mouseover', function() { $textarea.canBlur = false; })
-                    .on('mouseout', function() { $textarea.canBlur = true; });
+				var $textarea = jQuery(this), $twin = jQuery('<div />').css({
+					'position' : 'absolute',
+					'display' : 'none',
+					'word-wrap' : 'break-word',
+					'white-space' : 'pre-wrap'
+				}), lineHeight = parseInt($textarea.css('line-height'), 10) || parseInt($textarea.css('font-size'), '10'), minheight = parseInt($textarea.css('height'), 10) || lineHeight * 3, maxheight = parseInt($textarea.css('max-height'), 10) || Number.MAX_VALUE, goalheight = 0;
 
-                $twin.appendTo($textarea.parent());
+				// Opera returns max-height of -1 if not set
+				if (maxheight < 0) {
+					maxheight = Number.MAX_VALUE;
+				}
 
-                for (var i = 0; i < mimics.length; i++) {
-                    $twin.css(mimics[i], $textarea.css(mimics[i]));
-                }
+				$textarea.canBlur = true;
+				
+				$textarea.parentElement = defaults.parentElement;
+				$textarea.submitElement = defaults.submitElement;
 
-                function setTwinWidth() {
-                    var curatedWidth = Math.floor(parseInt($textarea.width(), 10));
-                    if ($twin.width() !== curatedWidth) {
-                        $twin.css('width', curatedWidth + 'px');
-                        update(true);
-                    }
-                }
+				$textarea.parents($textarea.parentElement).find($textarea.submitElement).bind('mouseover',function(){
+					$textarea.canBlur = false;
+				}).bind('mouseout', function(){
+					$textarea.canBlur=true;
+				});
 
-                function setHeightAndOverflow(height, overflow) {
-                    var curratedHeight = Math.floor(parseInt(height, 10));
-                    if ($textarea.height() !== curratedHeight) {
-                        $textarea.css({
-                            height: curratedHeight + 'px',
-                            overflow: overflow
-                        });
-                    }
-                }
+				// Append the twin to the DOM
+				// We are going to meassure the height of this, not the textarea.
+				$twin.appendTo($textarea.parent());
 
-                function update(forced) {
-                    var textareaContent = $textarea.val()
-                        .replace(/&/g, '&amp;')
-                        .replace(/ {2}/g, '&nbsp;')
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/\n/g, defaults.enterReplacement);
+				// Copy the essential styles (mimics) from the textarea to the twin
+				var i = mimics.length;
+				while (i--) {
+					$twin.css(mimics[i].toString(), $textarea.css(mimics[i].toString()));
+				}
 
-                    var twinContent = $twin.html().replace(/<br>/ig, '<br />');
+				// Updates the width of the twin. (solution for textareas with widths in percent)
+				function setTwinWidth() {
+					var curatedWidth = Math.floor(parseInt($textarea.width(), 10));
+					if ($twin.width() !== curatedWidth) {
+						$twin.css({
+							'width' : curatedWidth + 'px'
+						});
 
-                    if (forced || textareaContent + '&nbsp;' !== twinContent) {
-                        $twin.html(textareaContent + '&nbsp;');
-                        var goalheight = ($textarea.attr('data-newline') === 'true' && $textarea.is(':focus'))
-                            ? $twin.height() + lineHeight
-                            : $twin.height();
+						// Update height of textarea
+						update(true);
+					}
+				}
 
-                        if (Math.abs(goalheight - $textarea.height()) > 3) {
-                            if (goalheight >= maxheight) {
-                                setHeightAndOverflow(maxheight, 'auto');
-                            } else if (goalheight <= minheight) {
-                                setHeightAndOverflow(minheight, 'hidden');
-                            } else {
-                                setHeightAndOverflow(goalheight, 'hidden');
-                            }
-                        }
-                    }
-                }
+				// Sets a given height and overflow state on the textarea
+				function setHeightAndOverflow(height, overflow) {
 
-                $textarea.css('overflow', 'hidden');
+					var curratedHeight = Math.floor(parseInt(height, 10));
+					if ($textarea.height() !== curratedHeight) {
+						$textarea.css({
+							'height' : curratedHeight + 'px',
+							'overflow' : overflow
+						});
+					}
+				}
 
-                $textarea.on('keyup blur cut paste', function() {
-                    if ($textarea.canBlur) update(true);
-                });
+				// This function will update the height of the textarea if necessary
+				function update(forced) {
 
-                $(window).on('resize', setTwinWidth);
-                $textarea.on('resize', setTwinWidth);
-                $textarea.on('update', update);
-                $textarea.on('focusin', update);
+					var textareaContent = $textarea.val().replace(/&/g, '&amp;').replace(/ {2}/g, '&nbsp;').replace(/<|>/g, '&gt;').replace(/\n/g, defaults.enterReplacement);
 
-                $textarea.attr('data-newline', defaults.showNewLine);
-                $textarea.dataElastic = 'elastic';
+					// Compare curated content with curated twin.
+					var twinContent = $twin.html().replace(/<br>/ig, '<br />');
 
-                $textarea.on('blur', function() {
-                    if ($twin.height() < maxheight && $textarea.canBlur) {
-                        $textarea.height(Math.max($twin.height(), minheight));
-                    }
-                });
+					if (forced || textareaContent + '&nbsp;' !== twinContent) {
 
-                $textarea.on('input paste', function() {
-                    setTimeout(update, 250);
-                });
+						// Add an extra white space so new rows are added when you are at the end of a row.
+						$twin.html(textareaContent + '&nbsp;');
+						// Change textarea height if twin plus the height of one line differs more than 3 pixel from textarea height
+						if (  $textarea.attr('data-newline') == 'true' && $textarea.is(':focus'))
+							var goalheight = $twin.height()+lineHeight; // Additional line height for textarea
+						else
+							var goalheight = $twin.height(); // Do not add the additional line height to textarea
 
-                update(true);
-            });
-        }
-    });
+						if (Math.abs(goalheight - $textarea.height()) > 3) {
+
+							if (goalheight >= maxheight) {
+								setHeightAndOverflow(maxheight, 'auto');
+							} else if (goalheight <= minheight) {
+								setHeightAndOverflow(minheight, 'hidden');
+							} else {
+								setHeightAndOverflow(goalheight, 'hidden');
+							}
+
+						}
+
+					}
+
+				}
+
+				// Hide scrollbars
+				$textarea.css({
+					'overflow' : 'hidden'
+				});
+
+				// Update textarea size on keyup, change, cut and paste
+				$textarea.bind('keyup blur cut paste', function(event) {
+					if ( $textarea.canBlur) {
+						update(true);
+					}
+				});
+
+				// Update width of twin if browser or textarea is resized (solution for textareas with widths in percent)
+				$(window).live('resize', setTwinWidth);
+				$textarea.live('resize', setTwinWidth);
+				$textarea.live('update', update);
+				$textarea.live('focusin', update);
+				$textarea.attr('data-newline', defaults.showNewLine);
+				$textarea.dataElastic = 'elastic';
+
+				// Compact textarea on blur
+				$textarea.bind('blur', function(event) {
+					if ($twin.height() < maxheight && $textarea.canBlur) {
+						if ($twin.height() > minheight) {
+							$textarea.height($twin.height());
+						} else {
+							$textarea.height(minheight);
+						}
+					}
+				});
+
+				// And this line is to catch the browser paste event
+				$textarea.bind('input paste', function(e) {
+					setTimeout(update, 250);
+				});
+
+				// Run update once when elastic is initialized
+				update(true);
+
+			});
+
+		}
+	});
 })(jQuery);

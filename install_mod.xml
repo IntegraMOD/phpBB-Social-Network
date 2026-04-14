@@ -7,55 +7,300 @@
 		<meta name="generator" content="MODX file generated with PP MODX Creator by tumba25 (online version)"/>
 		<license><![CDATA[http://opensource.org/licenses/gpl-license.php GNU General Public License v2]]></license>
 		<title lang="en"><![CDATA[phpBB Social Network]]></title>
-		<description lang="en"><![CDATA[You can read about phpBB Social Network here: http://phpbbsocialnetwork.com/
-
-Detailed description of phpBB Social Network and its features: http://phpbbsocialnetwork.com/viewtopic.php?t=32
-
-Changelog: http://phpbbsocialnetwork.com/viewtopic.php?t=1023
-
-phpBB Social Network Facebook page: http://www.facebook.com/pages/phpBB-Social-Network/180271885389370
-
-Feel free to ask for support or request more features here http://phpbbsocialnetwork.com/]]></description>
+		<description lang="en"><![CDATA[You can read about phpBB Social Network here: https://www.phpbb.com/community/viewtopic.php?t=2008845]]></description>
 		<author-notes lang="en"><![CDATA[IMPORTANT!
-After installation, go to ACP -> Social Network and activate Friends Management System according to instructions.
+This mod requires phpBB3.0.15 found here: https://github.com/IntegraMOD/phpbb3.0.15
+After installing phpBB Social Network, go to ACP -> Social Network and activate Friends Management System according to instructions.
 
 Please note, that if you want to use "Fetch page" feature to fetch remote pages (while posting new status), you need to have CURL enabled, safe_mode off and open_basedir not set.]]></author-notes>
 		<author-group>
 			<author>
+				<realname><![CDATA[Helter]]></realname>
+				<username phpbbcom="yes"><![CDATA[Helter Skelter]]></username>
+				<homepage><![CDATA[https://integramod.com/forum/]]></homepage>
+				<contributions-group>
+					<contributions status="current" from="2024-04-03" position="Developer"/>
+				</contributions-group>
+			</author>
+			<author>
 				<username phpbbcom="no"><![CDATA[Kamahl19]]></username>
-				<homepage><![CDATA[http://phpbb3hacks.com/]]></homepage>
+				<homepage></homepage>
 				<email><![CDATA[kamahl19@gmail.com]]></email>
 				<contributions-group>
-					<contributions status="current" from="2010-02-01" position="Developer"/>
+					<contributions status="inactive" from="2010-02-01" position="Developer"/>
 				</contributions-group>
 			</author>
 			<author>
 				<realname><![CDATA[Jan Kalach]]></realname>
 				<username phpbbcom="no"><![CDATA[Culprit]]></username>
-				<homepage><![CDATA[http://phpbbsocialnetwork.com]]></homepage>
+				<homepage></homepage>
 				<contributions-group>
-					<contributions status="current" from="2010-06-01" position="Developer"/>
+					<contributions status="inactive" from="2010-06-01" position="Developer"/>
 				</contributions-group>
 			</author>
 			<author>
 				<realname><![CDATA[Jakub Senko]]></realname>
 				<username phpbbcom="no"><![CDATA[Senky]]></username>
-				<homepage><![CDATA[http://senky.me/]]></homepage>
+				<homepage></homepage>
 				<contributions-group>
-					<contributions status="current" from="2012-10-03" position="Developer"/>
+					<contributions status="inactive" from="2012-10-03" position="Developer"/>
 				</contributions-group>
 			</author>
 		</author-group>
-		<mod-version>0.7.2</mod-version>
+		<mod-version>0.8.0</mod-version>
 		<installation>
 			<level>easy</level>
 			<time>300</time>
-			<target-version>3.0.11</target-version>
+			<target-version>3.0.15</target-version>
 		</installation>
 	</header>
 	<action-group>
 		<copy>
-			<file from="root/*.*" to="*.*"/>
+		  <file from="root/activitypage.php" to="activitypage.php" />
+		  <file from="root/mainpage.php" to="mainpage.php" />
+		  <file from="root/profile.php" to="profile.php" />
+		  <file from="root/adm/style/acp_socialnet.html" to="adm/style/acp_socialnet.html" />
+		  <file from="root/adm/style/acp_socialnet_blocks.html" to="adm/style/acp_socialnet_blocks.html" />
+		  <file from="root/adm/style/acp_socialnet_update.html" to="adm/style/acp_socialnet_update.html" />
+		  <file from="root/adm/style/socialnet_addonhook.html" to="adm/style/socialnet_addonhook.html" />
+		  <file from="root/adm/style/socialnet_block_menu.html" to="adm/style/socialnet_block_menu.html" />
+		  <file from="root/adm/style/socialnet_update.html" to="adm/style/socialnet_update.html" />
+		  <file from="root/adm/style/socialnet_userprofile.html" to="adm/style/socialnet_userprofile.html" />
+		  <file from="root/assets/js/jquery/jquery-1.12.4.js" to="assets/js/jquery/jquery-1.12.4.js" />
+		  <file from="root/assets/js/jquery/jquery-ui-1.9.2.custom.min.js" to="assets/js/jquery/jquery-ui-1.9.2.custom.min.js" />
+		  <file from="root/includes/hooks/hook_socialnet.php" to="includes/hooks/hook_socialnet.php" />
+		  <file from="root/includes/acp/acp_socialnet.php" to="includes/acp/acp_socialnet.php" />
+		  <file from="root/includes/acp/info/acp_socialnet.php" to="includes/acp/info/acp_socialnet.php" />
+		  <file from="root/includes/mcp/mcp_socialnet.php" to="includes/mcp/mcp_socialnet.php" />
+		  <file from="root/includes/mcp/info/mcp_socialnet.php" to="includes/mcp/info/mcp_socialnet.php" />
+		  <file from="root/includes/ucp/ucp_socialnet.php" to="includes/ucp/ucp_socialnet.php" />
+		  <file from="root/includes/ucp/info/ucp_socialnet.php" to="includes/ucp/info/ucp_socialnet.php" />
+		  <file from="root/language/en/acp/permissions_socialnet.php" to="language/en/acp/permissions_socialnet.php" />
+		  <file from="root/language/en/mods/socialnet.php" to="language/en/mods/socialnet.php" />
+		  <file from="root/language/en/mods/socialnet_acp.php" to="language/en/mods/socialnet_acp.php" />
+		  
+		  <file from="root/socialnet/activitypage.php" to="socialnet/activitypage.php" />
+		  <file from="root/socialnet/approval.php" to="socialnet/approval.php" />
+		  <file from="root/socialnet/fetch.php" to="socialnet/fetch.php" />
+		  <file from="root/socialnet/fms_users.php" to="socialnet/fms_users.php" />
+		  <file from="root/socialnet/im.php" to="socialnet/im.php" />
+		  <file from="root/socialnet/index.htm" to="socialnet/index.htm" />
+		  <file from="root/socialnet/install_sn.php" to="socialnet/install_sn.php" />
+		  <file from="root/socialnet/notify.php" to="socialnet/notify.php" />
+		  <file from="root/socialnet/profile.php" to="socialnet/profile.php" />
+		  <file from="root/socialnet/transfer_fields.php" to="socialnet/transfer_fields.php" />
+		  <file from="root/socialnet/update_sn_0.7.0.php" to="socialnet/update_sn_0.7.0.php" />
+		  <file from="root/socialnet/userstatus.php" to="socialnet/userstatus.php" />
+		  <file from="root/socialnet/acp/acp_activitypage.php" to="socialnet/acp/acp_activitypage.php" />
+		  <file from="root/socialnet/acp/acp_approval.php" to="socialnet/acp/acp_approval.php" />
+		  <file from="root/socialnet/acp/acp_im.php" to="socialnet/acp/acp_im.php" />
+		  <file from="root/socialnet/acp/acp_notify.php" to="socialnet/acp/acp_notify.php" />
+		  <file from="root/socialnet/acp/acp_profile.php" to="socialnet/acp/acp_profile.php" />
+		  <file from="root/socialnet/acp/acp_userstatus.php" to="socialnet/acp/acp_userstatus.php" />
+		  <file from="root/socialnet/acp/block_menu.php" to="socialnet/acp/block_menu.php" />
+		  <file from="root/socialnet/acp/block_online_users.php" to="socialnet/acp/block_online_users.php" />
+		  <file from="root/socialnet/acp/index.htm" to="socialnet/acp/index.htm" />
+		  <file from="root/socialnet/addons/index.htm" to="socialnet/addons/index.htm" />
+		  <file from="root/socialnet/includes/constants.php" to="socialnet/includes/constants.php" />
+		  <file from="root/socialnet/includes/functions.php" to="socialnet/includes/functions.php" />
+		  <file from="root/socialnet/includes/index.htm" to="socialnet/includes/index.htm" />
+		  <file from="root/socialnet/includes/sn_core_addons.php" to="socialnet/includes/sn_core_addons.php" />
+		  <file from="root/socialnet/includes/sn_core_comments.php" to="socialnet/includes/sn_core_comments.php" />
+		  <file from="root/socialnet/includes/sn_core_entry.php" to="socialnet/includes/sn_core_entry.php" />
+		  <file from="root/socialnet/includes/sn_core_notify.php" to="socialnet/includes/sn_core_notify.php" />
+		  <file from="root/socialnet/includes/socialnet.php" to="socialnet/includes/socialnet.php" />
+		  <file from="root/socialnet/includes/video.php" to="socialnet/includes/video.php" />
+		  <file from="root/socialnet/js/index.htm" to="socialnet/js/index.htm" />
+		  <file from="root/socialnet/js/jquery.detectmobilebrowser.js" to="socialnet/js/jquery.detectmobilebrowser.js" />
+		  <file from="root/socialnet/js/jquery.editable.js" to="socialnet/js/jquery.editable.js" />
+		  <file from="root/socialnet/js/jquery.elastic.source.js" to="socialnet/js/jquery.elastic.source.js" />
+		  <file from="root/socialnet/js/jquery.events.input.js" to="socialnet/js/jquery.events.input.js" />
+		  <file from="root/socialnet/js/jquery.expander.min.js" to="socialnet/js/jquery.expander.min.js" />
+		  <file from="root/socialnet/js/jquery.form.js" to="socialnet/js/jquery.form.js" />
+		  <file from="root/socialnet/js/jquery.hoverIntent.min.js" to="socialnet/js/jquery.hoverIntent.min.js" />
+		  <file from="root/socialnet/js/jquery.jgrowl_minimized.js" to="socialnet/js/jquery.jgrowl_minimized.js" />
+		  <file from="root/socialnet/js/jquery.mentionsInput.js" to="socialnet/js/jquery.mentionsInput.js" />
+		  <file from="root/socialnet/js/jquery.metadata.js" to="socialnet/js/jquery.metadata.js" />
+		  <file from="root/socialnet/js/jquery.text-overflow.min.js" to="socialnet/js/jquery.text-overflow.min.js" />
+		  <file from="root/socialnet/js/jquery.timers.js" to="socialnet/js/jquery.timers.js" />
+		  <file from="root/socialnet/js/jquery.titlealert.js" to="socialnet/js/jquery.titlealert.js" />
+		  <file from="root/socialnet/js/jquery.watermark.min.js" to="socialnet/js/jquery.watermark.min.js" />
+		  <file from="root/socialnet/js/jquery_cookie.js" to="socialnet/js/jquery_cookie.js" />
+		  <file from="root/socialnet/js/jquery-ui-1.9.2.custom.min.js" to="socialnet/js/jquery-ui-1.9.2.custom.min.js" />
+		  <file from="root/socialnet/js/jquery-ui-custom.min.js" to="socialnet/js/jquery-ui-custom.min.js" />
+		  <file from="root/socialnet/js/m.activitypage.js" to="socialnet/js/m.activitypage.js" />
+		  <file from="root/socialnet/js/m.approval.js" to="socialnet/js/m.approval.js" />
+		  <file from="root/socialnet/js/m.confirmbox.js" to="socialnet/js/m.confirmbox.js" />
+		  <file from="root/socialnet/js/m.im.js" to="socialnet/js/m.im.js" />
+		  <file from="root/socialnet/js/m.notify.js" to="socialnet/js/m.notify.js" />
+		  <file from="root/socialnet/js/m.profile.js" to="socialnet/js/m.profile.js" />
+		  <file from="root/socialnet/js/m.socialnet.js" to="socialnet/js/m.socialnet.js" />
+		  <file from="root/socialnet/js/m.userstatus.js" to="socialnet/js/m.userstatus.js" />
+		  <file from="root/socialnet/js/underscore-min.js" to="socialnet/js/underscore-min.js" />
+		  <file from="root/socialnet/mcp/index.htm" to="socialnet/mcp/index.htm" />
+		  <file from="root/socialnet/mcp/mcp_reportuser.php" to="socialnet/mcp/mcp_reportuser.php" />
+		  <file from="root/socialnet/styles/emotes/argue.gif" to="socialnet/styles/emotes/argue.gif" />
+		  <file from="root/socialnet/styles/emotes/dance.gif" to="socialnet/styles/emotes/dance.gif" />
+		  <file from="root/socialnet/styles/emotes/hug.gif" to="socialnet/styles/emotes/hug.gif" />
+		  <file from="root/socialnet/styles/emotes/index.htm" to="socialnet/styles/emotes/.gifindex.htm" />
+		  <file from="root/socialnet/styles/emotes/kick.gif" to="socialnet/styles/emotes/kick.gif" />
+		  <file from="root/socialnet/styles/emotes/kiss.gif" to="socialnet/styles/emotes/kiss.gif" />
+		  <file from="root/socialnet/styles/emotes/love.gif" to="socialnet/styles/emotes/love.gif" />
+		  <file from="root/socialnet/styles/emotes/poke.gif" to="socialnet/styles/emotes/poke.gif" />
+		  <file from="root/socialnet/styles/emotes/sorry.gif" to="socialnet/styles/emotes/sorry.gif" />
+		  <file from="root/socialnet/styles/emotes/wave.gif" to="socialnet/styles/emotes/wave.gif" />
+		  <file from="root/socialnet/styles/emotes/whisper.gif" to="socialnet/styles/emotes/whisper.gif" />
+		  <file from="root/socialnet/styles/images/addons_config.png" to="socialnet/styles/images/addons_config.png" />
+		  <file from="root/socialnet/styles/images/blocks_config.png" to="socialnet/styles/images/blocks_config.png" />
+		  <file from="root/socialnet/styles/images/blocks_enable.png" to="socialnet/styles/images/blocks_enable.png" />
+		  <file from="root/socialnet/styles/images/im_no_avatar.png" to="socialnet/styles/images/im_no_avatar.png" />
+		  <file from="root/socialnet/styles/images/im_no_avatar_30.png" to="socialnet/styles/images/im_no_avatar_30.png" />
+		  <file from="root/socialnet/styles/images/im_no_avatar_50.png" to="socialnet/styles/images/im_no_avatar_50.png" />
+		  <file from="root/socialnet/styles/images/im_no_avatar_150.png" to="socialnet/styles/images/im_no_avatar_150.png" />
+		  <file from="root/socialnet/styles/images/index.htm" to="socialnet/styles/images/index.htm" />
+		  <file from="root/socialnet/styles/images/module_activitypage.png" to="socialnet/styles/images/module_activitypage.png" />
+		  <file from="root/socialnet/styles/images/module_approval.png" to="socialnet/styles/images/module_approval.png" />
+		  <file from="root/socialnet/styles/images/module_core.png" to="socialnet/styles/images/module_core.png" />
+		  <file from="root/socialnet/styles/images/module_im.png" to="socialnet/styles/images/module_im.png" />
+		  <file from="root/socialnet/styles/images/module_notify.png" to="socialnet/styles/images/module_notify.png" />
+		  <file from="root/socialnet/styles/images/module_profile.png" to="socialnet/styles/images/module_profile.png" />
+		  <file from="root/socialnet/styles/images/module_update0.png" to="socialnet/styles/images/module_update0.png" />
+		  <file from="root/socialnet/styles/images/module_update1.png" to="socialnet/styles/images/module_update1.png" />
+		  <file from="root/socialnet/styles/images/module_update2.png" to="socialnet/styles/images/module_update2.png" />
+		  <file from="root/socialnet/styles/images/module_userstatus.png" to="socialnet/styles/images/module_userstatus.png" />
+		  <file from="root/socialnet/styles/images/sett_confirmBox.png" to="socialnet/styles/images/sett_confirmBox.png" />
+		  <file from="root/socialnet/styles/images/sett_modules.png" to="socialnet/styles/images/sett_modules.png" />
+		  <file from="root/socialnet/styles/images/socialNet.png" to="socialnet/styles/images/socialNet.png" />
+		  <file from="root/socialnet/styles/sound/IM_Balloon.mp3" to="socialnet/styles/sound/IM_Balloon.mp3" />
+		  <file from="root/socialnet/styles/sound/IM_Connect.mp3" to="socialnet/styles/sound/IM_Connect.mp3" />
+		  <file from="root/socialnet/styles/sound/IM_Default.mp3" to="socialnet/styles/sound/IM_Default.mp3" />
+		  <file from="root/socialnet/styles/sound/IM_Disconnect.mp3" to="socialnet/styles/sound/IM_Disconnect.mp3" />
+		  <file from="root/socialnet/styles/sound/IM_Error.mp3" to="socialnet/styles/sound/IM_Error.mp3" />
+		  <file from="root/socialnet/styles/sound/IM_Exclamation.mp3" to="socialnet/styles/sound/IM_Exclamation.mp3" />
+		  <file from="root/socialnet/styles/sound/IM_Fail.mp3" to="socialnet/styles/sound/IM_Fail.mp3" />
+		  <file from="root/socialnet/styles/sound/IM_Menu popup.mp3" to="socialnet/styles/sound/IM_Menu popup.mp3" />
+		  <file from="root/socialnet/styles/sound/IM_New-Mail.mp3" to="socialnet/styles/sound/IM_New-Mail.mp3" />
+		  <file from="root/socialnet/styles/sound/IM_New-message-1.mp3" to="socialnet/styles/sound/IM_New-message-1.mp3" />
+		  <file from="root/socialnet/styles/sound/IM_Question.mp3" to="socialnet/styles/sound/IM_Question.mp3" />
+		  <file from="root/socialnet/styles/sound/index.htm" to="socialnet/styles/sound/index.htm" />
+		  <file from="root/socialnet/styles/sound/player_mp3_button.swf" to="socialnet/styles/sound/player_mp3_button.swf" />
+		  <file from="root/socialnet/styles/sound/player_mp3_maxi.swf" to="socialnet/styles/sound/player_mp3_maxi.swf" />
+		  <file from="root/socialnet/styles/accept.png" to="socialnet/styles/accept.png" />
+		  <file from="root/socialnet/styles/adm_style.css" to="socialnet/styles/adm_style.css" />
+		  <file from="root/socialnet/styles/index.htm" to="socialnet/styles/index.htm" />
+		  <file from="root/socialnet/ucp/index.htm" to="socialnet/ucp/index.htm" />
+		  <file from="root/socialnet/ucp/ucp_approval.php" to="socialnet/ucp/ucp_approval.php" />
+		  <file from="root/socialnet/ucp/ucp_im.php" to="socialnet/ucp/ucp_im.php" />
+		  <file from="root/socialnet/ucp/ucp_profile.php" to="socialnet/ucp/ucp_profile.php" />
+		  <file from="root/styles/prosilver/imageset/socialnet/index.htm" to="styles/prosilver/imageset/socialnet/index.htm" />
+		  <file from="root/styles/prosilver/imageset/socialnet/ap_search.png" to="styles/prosilver/imageset/socialnet/ap_search.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_arrow_down.png" to="styles/prosilver/imageset/socialnet/button_arrow_down.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_arrow_top.png" to="styles/prosilver/imageset/socialnet/button_arrow_top.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_close.png" to="styles/prosilver/imageset/socialnet/button_close.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_close_im.png" to="styles/prosilver/imageset/socialnet/button_close_im.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_close_red.png" to="styles/prosilver/imageset/socialnet/button_close_red.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_fetch_next.png" to="styles/prosilver/imageset/socialnet/button_fetch_next.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_fetch_prev.png" to="styles/prosilver/imageset/socialnet/button_fetch_prev.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_history.png" to="styles/prosilver/imageset/socialnet/button_history.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_ok.png" to="styles/prosilver/imageset/socialnet/button_ok.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_ok_green.png" to="styles/prosilver/imageset/socialnet/button_ok_green.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_profile_edit.png" to="styles/prosilver/imageset/socialnet/button_profile_edit.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_sound.png" to="styles/prosilver/imageset/socialnet/button_sound.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/button_user.png" to="styles/prosilver/imageset/socialnet/button_user.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/icon_activitypage.gif" to="styles/prosilver/imageset/socialnet/icon_activitypage.gif" />
+		  <file from="root/styles/prosilver/imageset/socialnet/icon_fms_add_user.png" to="styles/prosilver/imageset/socialnet/icon_fms_add_user.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/icon_profile.gif" to="styles/prosilver/imageset/socialnet/icon_profile.gif" />
+		  <file from="root/styles/prosilver/imageset/socialnet/icon_up_changed.png" to="styles/prosilver/imageset/socialnet/icon_up_changed.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/icon_up_new_family.png" to="styles/prosilver/imageset/socialnet/icon_up_new_family.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/icon_up_new_relationship.png" to="styles/prosilver/imageset/socialnet/icon_up_new_relationship.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/icon_up_send_emote.png" to="styles/prosilver/imageset/socialnet/icon_up_send_emote.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/im_bg_toolbar.png" to="styles/prosilver/imageset/socialnet/im_bg_toolbar.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/im_button_login.png" to="styles/prosilver/imageset/socialnet/im_button_login.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/im_button_sound.png" to="styles/prosilver/imageset/socialnet/im_button_sound.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/im_history_incoming.png" to="styles/prosilver/imageset/socialnet/im_history_incoming.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/im_history_outgoing.png" to="styles/prosilver/imageset/socialnet/im_history_outgoing.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/im_me_offline.png" to="styles/prosilver/imageset/socialnet/im_me_offline.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/im_me_online.png" to="styles/prosilver/imageset/socialnet/im_me_online.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/im_smiley.png" to="styles/prosilver/imageset/socialnet/im_smiley.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/im_user_away.png" to="styles/prosilver/imageset/socialnet/im_user_away.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/im_user_offline.png" to="styles/prosilver/imageset/socialnet/im_user_offline.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/im_user_online.png" to="styles/prosilver/imageset/socialnet/im_user_online.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/no_avatar.png" to="styles/prosilver/imageset/socialnet/no_avatar.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/no_avatar_30.png" to="styles/prosilver/imageset/socialnet/no_avatar_30.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/no_avatar_50.png" to="styles/prosilver/imageset/socialnet/no_avatar_50.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/no_avatar_150.png" to="styles/prosilver/imageset/socialnet/no_avatar_150.png" />
+		  <file from="root/styles/prosilver/imageset/socialnet/sn_loader_large.gif" to="styles/prosilver/imageset/socialnet/sn_loader_large.gif" />
+		  <file from="root/styles/prosilver/imageset/socialnet/sn_loader_small.gif" to="styles/prosilver/imageset/socialnet/sn_loader_small.gif" />
+		  <file from="root/styles/prosilver/template/socialnet/addons/index.htm" to="styles/prosilver/template/socialnet/addons/index.htm" />
+		  <file from="root/styles/prosilver/template/socialnet/activitypage_body.html" to="styles/prosilver/template/socialnet/activitypage_body.html" />
+
+
+		  <file from="root/styles/prosilver/template/socialnet/activitypage_body_entries.html" to="styles/prosilver/template/socialnet/activitypage_body_entries.html" />
+		  <file from="root/styles/prosilver/template/socialnet/activitypage_notify.html" to="styles/prosilver/template/socialnet/activitypage_notify.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_birthday.html" to="styles/prosilver/template/socialnet/block_birthday.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_comments.html" to="styles/prosilver/template/socialnet/block_comments.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_fms_users.html" to="styles/prosilver/template/socialnet/block_fms_users.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_fms_users_pagination.html" to="styles/prosilver/template/socialnet/block_fms_users_pagination.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_friend_requests.html" to="styles/prosilver/template/socialnet/block_friend_requests.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_friends_suggestions.html" to="styles/prosilver/template/socialnet/block_friends_suggestions.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_login.html" to="styles/prosilver/template/socialnet/block_login.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_menu.html" to="styles/prosilver/template/socialnet/block_menu.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_menu_item.html" to="styles/prosilver/template/socialnet/block_menu_item.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_myprofile.html" to="styles/prosilver/template/socialnet/block_myprofile.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_online_users.html" to="styles/prosilver/template/socialnet/block_online_users.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_page_header.html" to="styles/prosilver/template/socialnet/block_page_header.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_recent_discussions.html" to="styles/prosilver/template/socialnet/block_recent_discussions.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_search.html" to="styles/prosilver/template/socialnet/block_search.html" />
+		  <file from="root/styles/prosilver/template/socialnet/block_statistics.html" to="styles/prosilver/template/socialnet/block_statistics.html" />
+		  <file from="root/styles/prosilver/template/socialnet/confirm_body.html" to="styles/prosilver/template/socialnet/confirm_body.html" />
+		  <file from="root/styles/prosilver/template/socialnet/confirm_relation_body.html" to="styles/prosilver/template/socialnet/confirm_relation_body.html" />
+		  <file from="root/styles/prosilver/template/socialnet/im.html" to="styles/prosilver/template/socialnet/im.html" />
+		  <file from="root/styles/prosilver/template/socialnet/im_onlinelist.html" to="styles/prosilver/template/socialnet/im_onlinelist.html" />
+		  <file from="root/styles/prosilver/template/socialnet/im_smilies.html" to="styles/prosilver/template/socialnet/im_smilies.html" />
+		  <file from="root/styles/prosilver/template/socialnet/mcp_reportuser.html" to="styles/prosilver/template/socialnet/mcp_reportuser.html" />
+		  <file from="root/styles/prosilver/template/socialnet/memberlist_view.html" to="styles/prosilver/template/socialnet/memberlist_view.html" />
+		  <file from="root/styles/prosilver/template/socialnet/message_body.html" to="styles/prosilver/template/socialnet/message_body.html" />
+		  <file from="root/styles/prosilver/template/socialnet/overall_header_hook_css.html" to="styles/prosilver/template/socialnet/overall_header_hook_css.html" />
+		  <file from="root/styles/prosilver/template/socialnet/overall_header_hook_js.html" to="styles/prosilver/template/socialnet/overall_header_hook_js.html" />
+		  <file from="root/styles/prosilver/template/socialnet/transfer_fields.html" to="styles/prosilver/template/socialnet/transfer_fields.html" />
+		  <file from="root/styles/prosilver/template/socialnet/ucp_approval_block_ufg.html" to="styles/prosilver/template/socialnet/ucp_approval_block_ufg.html" />
+		  <file from="root/styles/prosilver/template/socialnet/ucp_approval_friends.html" to="styles/prosilver/template/socialnet/ucp_approval_friends.html" />
+		  <file from="root/styles/prosilver/template/socialnet/ucp_approval_ufg.html" to="styles/prosilver/template/socialnet/ucp_approval_ufg.html" />
+		  <file from="root/styles/prosilver/template/socialnet/ucp_im_history.html" to="styles/prosilver/template/socialnet/ucp_im_history.html" />
+		  <file from="root/styles/prosilver/template/socialnet/ucp_profile.html" to="styles/prosilver/template/socialnet/ucp_profile.html" />
+		  <file from="root/styles/prosilver/template/socialnet/ucp_profile_relations.html" to="styles/prosilver/template/socialnet/ucp_profile_relations.html" />
+		  <file from="root/styles/prosilver/template/socialnet/ucp_socialnet.html" to="styles/prosilver/template/socialnet/ucp_socialnet.html" />
+		  <file from="root/styles/prosilver/template/socialnet/user_profile_body.html" to="styles/prosilver/template/socialnet/user_profile_body.html" />
+		  <file from="root/styles/prosilver/template/socialnet/user_profile_report_user.html" to="styles/prosilver/template/socialnet/user_profile_report_user.html" />
+		  <file from="root/styles/prosilver/template/socialnet/user_profile_tab_friends.html" to="styles/prosilver/template/socialnet/user_profile_tab_friends.html" />
+		  <file from="root/styles/prosilver/template/socialnet/user_profile_tab_info.html" to="styles/prosilver/template/socialnet/user_profile_tab_info.html" />
+		  <file from="root/styles/prosilver/template/socialnet/user_profile_tab_report_user.html" to="styles/prosilver/template/socialnet/user_profile_tab_report_user.html" />
+		  <file from="root/styles/prosilver/template/socialnet/user_profile_tab_stats.html" to="styles/prosilver/template/socialnet/user_profile_tab_stats.html" />
+		  <file from="root/styles/prosilver/template/socialnet/user_profile_tab_wall.html" to="styles/prosilver/template/socialnet/user_profile_tab_wall.html" />
+		  <file from="root/styles/prosilver/template/socialnet/userstatus_fetch.html" to="styles/prosilver/template/socialnet/userstatus_fetch.html" />
+		  <file from="root/styles/prosilver/template/socialnet/userstatus_memberlist.html" to="styles/prosilver/template/socialnet/userstatus_memberlist.html" />
+		  <file from="root/styles/prosilver/template/userstatus_statussocialnet/.html" to="styles/prosilver/template/socialnet/userstatus_status.html" />
+		  <file from="root/styles/prosilver/theme/images/ui-bg_flat_0_aaaaaa_40x100.png" to="styles/prosilver/theme/images/ui-bg_flat_0_aaaaaa_40x100.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-bg_flat_75_ffffff_40x100.png" to="styles/prosilver/theme/images/ui-bg_flat_75_ffffff_40x100.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-bg_glass_55_fbf9ee_1x400.png" to="styles/prosilver/theme/images/ui-bg_glass_55_fbf9ee_1x400.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-bg_glass_65_0a8fd1_1x400.png" to="styles/prosilver/theme/images/ui-bg_glass_65_0a8fd1_1x400.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-bg_glass_75_dadada_1x400.png" to="styles/prosilver/theme/images/ui-bg_glass_75_dadada_1x400.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-bg_glass_75_e6e6e6_1x400.png" to="styles/prosilver/theme/images/ui-bg_glass_75_e6e6e6_1x400.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-bg_highlight-soft_75_cccccc_1x100.png" to="styles/prosilver/theme/images/ui-bg_highlight-soft_75_cccccc_1x100.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-bg_inset-soft_95_fef1ec_1x100.png" to="styles/prosilver/theme/images/ui-bg_inset-soft_95_fef1ec_1x100.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-icons_2e83ff_256x240.png" to="styles/prosilver/theme/images/ui-icons_2e83ff_256x240.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-icons_222222_256x240.png" to="styles/prosilver/theme/images/ui-icons_222222_256x240.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-icons_454545_256x240.png" to="styles/prosilver/theme/images/ui-icons_454545_256x240.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-icons_888888_256x240.png" to="styles/prosilver/theme/images/ui-icons_888888_256x240.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-icons_cd0a0a_256x240.png" to="styles/prosilver/theme/images/ui-icons_cd0a0a_256x240.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-icons_f0f0f0_256x240.png" to="styles/prosilver/theme/images/ui-icons_f0f0f0_256x240.png" />
+		  <file from="root/styles/prosilver/theme/images/ui-icons_phpBB_256x240.png" to="styles/prosilver/theme/images/ui-icons_phpBB_256x240.png" />
+		  <file from="root/styles/prosilver/theme/jquery.jgrowl.css" to="styles/prosilver/theme/jquery.jgrowl.css" />
+		  <file from="root/styles/prosilver/theme/jquery-ui-1.9.2.custom.min.css" to="styles/prosilver/theme/jquery-ui-1.9.2.custom.min.css" />
+		  <file from="root/styles/prosilver/themejquery-ui-1.14.1.custom.min.css" to="styles/prosilver/theme/jquery-ui-1.14.1.custom.min.css" />
+		  <file from="root/styles/prosilver/theme/socialnet.css" to="styles/prosilver/theme/socialnet.css" />
+		  <file from="root/umil/*.*" to="umil/*.*" />
+
 		</copy>
 		<open src="search.php">
 			<edit>
@@ -121,8 +366,9 @@ Please note, that if you want to use "Fetch page" feature to fetch remote pages 
 				<action type="after-add"><![CDATA[			  <!-- IF SN_MODULE_ACTIVITYPAGE_ENABLED --><li class="icon-activitypage"><a href="{U_SN_ACTIVITYPAGE}">{L_SN_AP_ACTIVITYPAGE}</a><span id="sn-ntf-notify">(<a href="{U_VIEW_NOTIFY}">{S_SN_USER_UNREAD_NOTIFY}</a>)</span></li><!-- ENDIF -->]]></action>
 			</edit>
 			<edit>
-				<find><![CDATA[				<li class="icon-ucp">]]></find>
-				<action type="before-add"><![CDATA[        <!-- IF S_USER_LOGGED_IN and not S_IS_BOT and SN_MODULE_PROFILE_ENABLED --><li class="icon-profile"><a href="{U_SN_MY_PROFILE}" title="{L_SN_MYPROFILE}"><strong>{S_USERNAME}</strong></a></li><!-- ENDIF -->]]></action>
+				<find><![CDATA[			<!-- IF not S_IS_BOT and S_USER_LOGGED_IN -->
+			<ul class="linklist leftside">]]></find>
+				<action type="after-add"><![CDATA[        <!-- IF S_USER_LOGGED_IN and not S_IS_BOT and SN_MODULE_PROFILE_ENABLED --><li class="icon-profile"><a href="{U_SN_MY_PROFILE}" title="{L_SN_MYPROFILE}"><strong>{S_USERNAME}</strong></a></li><!-- ENDIF -->]]></action>
 			</edit>
 		</open>
 		<open src="styles/prosilver/theme/stylesheet.css">
@@ -133,6 +379,76 @@ Please note, that if you want to use "Fetch page" feature to fetch remote pages 
 ]]></action>
 			</edit>
 		</open>
+		
+		
+		
+		
+		<open src="styles/IM_blue/template/memberlist_view.html">
+			<edit>
+				<find><![CDATA[</form>]]></find>
+				<action type="after-add"><![CDATA[<!-- IF SN_MODULE_APPROVAL_ENABLED && SN_FMS_BLOCK_FRIEND_IS_NOT_EMPTY -->
+<div class="panel bg1">
+	<div class="inner"><span class="corners-top"><span></span></span>
+		<h3>{L_SN_FAS_FRIEND_LIST}</h3>
+    {SN_FMS_BLOCK_FRIEND_CONTENT}<div class="clear"></div>
+    {SN_FMS_BLOCK_FRIEND_PAGINATION_STRING}<div class="clear"></div>
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+<!-- ENDIF -->
+<!-- IF SN_MODULE_USERSTATUS_ENABLED && SN_MODULE_USERSTATUS_VIEWPROFILE_ENABLE -->
+  <!-- INCLUDE socialnet/userstatus_memberlist.html -->
+<!-- ENDIF -->]]></action>
+			</edit>
+		</open>
+		<open src="styles/IM_blue/template/overall_footer.html">
+			<edit>
+				<find><![CDATA[	<!-- IF not S_IS_BOT -->{RUN_CRON_TASK}<!-- ENDIF -->
+</div>]]></find>
+				<action type="after-add"><![CDATA[<!-- IF SN_MODULE_IM_ENABLED -->
+    <!-- INCLUDE socialnet/im.html -->
+<!-- ENDIF -->]]></action>
+			</edit>
+		</open>
+		<open src="styles/IM_blue/template/overall_header.html">
+			<edit>
+				<find><![CDATA[<link href="{T_THEME_PATH}/print.css" rel="stylesheet" type="text/css" media="print" title="printonly" />]]></find>
+				<action type="before-add"><![CDATA[<!-- INCLUDE socialnet/overall_header_hook_css.html -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[</head>]]></find>
+				<action type="before-add"><![CDATA[<!-- INCLUDE socialnet/overall_header_hook_js.html -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[<body id="phpbb" class="section-{SCRIPT_NAME} {S_CONTENT_DIRECTION} {BODY_CLASS}">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[<body id="phpbb" class="section-{SCRIPT_NAME} {S_CONTENT_DIRECTION} {BODY_CLASS}]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF SN_MODULE_IM_ENABLED --> sn-im-page<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<ul class="linklist navlinks">]]></find>
+				<action type="after-add"><![CDATA[			  <!-- IF SN_MODULE_ACTIVITYPAGE_ENABLED --><li class="icon-activitypage"><a href="{U_SN_ACTIVITYPAGE}">{L_SN_AP_ACTIVITYPAGE}</a><span id="sn-ntf-notify">(<a href="{U_VIEW_NOTIFY}">{S_SN_USER_UNREAD_NOTIFY}</a>)</span></li><!-- ENDIF -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				<li class="icon-ucp">]]></find>
+				<action type="before-add"><![CDATA[        <!-- IF S_USER_LOGGED_IN and not S_IS_BOT and SN_MODULE_PROFILE_ENABLED --><li class="icon-profile"><a href="{U_SN_MY_PROFILE}" title="{L_SN_MYPROFILE}"><strong>{S_USERNAME}</strong></a></li><!-- ENDIF -->]]></action>
+			</edit>
+		</open>
+		<open src="styles/IM_blue/theme/stylesheet.css">
+			<edit>
+				<find><![CDATA[@import url("colours.css");]]></find>
+				<action type="after-add"><![CDATA[@import url("socialnet.css");
+@import url("jquery.jgrowl.css");
+]]></action>
+			</edit>
+		</open>		
+		
+		
+		
+		
+		
+		
+		
 		<php-installer><![CDATA[socialnet/install_sn.php]]></php-installer>
 		<diy-instructions lang="en"><![CDATA[IMPORTANT!!!
 After installation, go to ACP -> Social Network and activate Friends Management System according to instructions.

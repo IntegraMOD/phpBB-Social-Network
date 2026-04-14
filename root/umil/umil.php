@@ -2945,7 +2945,7 @@ class umil
 					case 'oracle':
 						if ($key_data[0] == 'UNIQUE')
 						{
-							continue;
+							continue 2;
 						}
 
 						$sql .= ($key_data[0] == 'INDEX') ? 'CREATE INDEX' : '';

@@ -1,5 +1,5 @@
 <!-- INCLUDE overall_header.html -->
-<script type="text/javascript">
+<script>
 // <![CDATA[
 document.write('<link href="../socialnet/styles/adm_style.css" rel="stylesheet" type="text/css" media="screen" '+'/>');
 //]]>
@@ -165,55 +165,6 @@ document.write('<link href="../socialnet/styles/adm_style.css" rel="stylesheet" 
 <!-- ENDIF -->
 <!-- IF B_ACP_SN_PROFILE -->
 	<!-- INCLUDE socialnet_userprofile.html -->	
-<!-- ENDIF -->
-
-<!-- IF SN_VERSION_AVAILABLE -->
-  <h2>{L_VERSION_CHECK}</h2>
-  <!-- INCLUDE socialnet_update.html -->
-  <!-- IF .avail_module -->
-    <fieldset>
-      <legend>{L_SN_AVAILABLE_MODULES}</legend>
-      <!-- BEGIN avail_module -->
-        <dl style="background: transparent url('http://socialnetwork.phpbb3hacks.com/socialnet/styles/images/{avail_module.CODE_NAME}.png') no-repeat 0 0;padding-left: 50px;">
-          <dt class="module" style="background: transparent url('http://socialnetwork.phpbb3hacks.com/socialnet/styles/images/module_update{avail_module.STATUS}.png') no-repeat 100% 0;min-height:50px">
-            <label>{avail_module.NAME}</label>
-            <!-- IF avail_module.MSG --><p>{avail_module.MSG}</p><!-- ENDIF -->
-          </dt>
-          <dd class="version">{L_VERSION_AVAILABLE}: <strong>{avail_module.VERSION}</strong></dd>
-          <dd class="version">{L_VERSION_INSTALLED}: <strong><!-- IF avail_module.INSTALLED_VERSION neq '' -->{avail_module.INSTALLED_VERSION}<!-- ELSE -->{L_NOT_INSTALLED}<!-- ENDIF --></strong></dd>
-          <!-- IF avail_module.STATUS neq '1' -->
-      			<dd class="download">
-      				<!-- IF avail_module.INSTALLED_VERSION eq '' -->
-        				<!-- IF avail_module.B_PAY -->
-        				  {L_BUY_HERE}:
-        				<!-- ELSE -->
-        				  {L_DOWNLOAD}:
-        				<!-- ENDIF -->
-      				  <a href="{avail_module.BUY}" target="_blank"><strong>{avail_module.DOWNLOAD}</strong></a>
-      				<!-- ELSE -->
-      				  {L_UPDATE_TO_LATEST}: <a href="{avail_module.DOWNLOAD}" target="_blank"><strong>{avail_module.DOWNLOAD}</strong></a>
-      				<!-- ENDIF -->
-      			</dd>
-          <!-- ENDIF -->
-    		</dl>
-  		<!-- END avail_module -->
-    </fieldset>
-  <!-- ENDIF -->
-<!-- ENDIF -->
-
-<!-- IF B_ACP_SN_MAIN -->
-  <fieldset>
-    <legend>{L_ACP_SN_LIKE_US_FB}</legend>
-    {L_ACP_SN_LIKE_US_FB_EXPLAIN}
-    <object type="text/html" data="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FphpBB-Social-Network%2F180271885389370&amp;send=false&amp;layout=standard&amp;width=650&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=25&amp;appId=217550038308424" width="100%" height="25" style="margin-top:15px;">
-    	<param name="src" value="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FphpBB-Social-Network%2F180271885389370&amp;send=false&amp;layout=standard&amp;width=650&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=25&amp;appId=217550038308424" />
-    </object>
-  </fieldset>
-  
-  <fieldset>
-    <legend>{L_ACP_SN_CONTRIBUTE}</legend>
-    {L_ACP_SN_CONTRIBUTE_EXPLAIN}
-  </fieldset>
 <!-- ENDIF -->
 
 <!-- IF B_ACP_SN_ADDONHOOK -->

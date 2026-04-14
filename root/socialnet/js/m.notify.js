@@ -11,114 +11,119 @@
  * @returns {void}
  */
 (function($, $sn) {
-    $sn.ntf = {
-        checkTime: 6000,
-        timerName: 'sn-ntf-ticker',
-        url: '',
-        position: $sn.rtl ? 'bottom-right' : 'bottom-left',
-        glue: 'before',
-        closer: false,
-        life: 10000,
-        theme: 'black',
+	$sn.ntf = {
+		checkTime: 6000,
+		timerName: 'sn-ntf-ticker',
+		url: '',
+		position: $sn.rtl ? 'bottom-right' : 'bottom-left',
+		glue: 'before',
+		closer: false,
+		life: 10000,
+		theme: 'black',
+		/**
+		 * Initialization
+		 * @param {object} opts Options
+		 * @returns {void}
+		 */
+		init: function(opts) {
+			var self = this;
+			if (!$sn._inited) {
+				return false;
+			}
+			if ($sn.enableModules.ntf == undefined || !$sn.enableModules.ntf) {
+				return false;
+			}
+			$sn._settings(this, opts);
 
-        init: function(opts) {
-            var self = this;
-            if (!$sn._inited) return false;
-            if ($sn.enableModules.ntf == undefined || !$sn.enableModules.ntf) return false;
+			$.extend($.jGrowl.defaults, {
+				position: this.position,
+				glue: this.glue,
+				closer: this.closer,
+				life: this.life,
+				theme: this.theme
+			});
 
-            $sn._settings(this, opts);
+			$(document).on('click', '.sn-ntf-delete', function() {
+				var $ntf_bl = $(this).parents('.sn-ntf-block');
+				var ntf_id = $sn.getAttr($(this), 'ntf_id');
 
-            $.extend($.jGrowl.defaults, {
-                position: this.position,
-                glue: this.glue,
-                closer: this.closer,
-                life: this.life,
-                theme: this.theme
-            });
+				$.ajax({
+					type: 'post',
+					url: self.url,
+					dataType: 'json',
+					data: {
+						type: 'delete',
+						nid: ntf_id
+					},
+					success: function(data) {
+						if (data.del) {
+							$ntf_bl.remove();
+							if ($('#sn-page-content').children('.sn-ntf-block').size() == 0) {
+								$('.sn-ntf-no-ntf').show();
+							}
+						}
+					}
+				});
+			});
 
-            // Modernized event bindings
-            $(document).on('click', '.sn-ntf-delete', function() {
-                var $ntf_bl = $(this).closest('.sn-ntf-block');
-                var ntf_id = $sn.getAttr($(this), 'ntf_id');
+			$(document).on('click', '.sn-ntf-markRead', function() {
+				var $this = $(this);
+				var $ntf_bl = $(this).parents('.sn-ntf-block');
+				var ntf_id = $sn.getAttr($(this), 'ntf_id');
+				$.ajax({
+					type: 'post',
+					url: self.url,
+					dataType: 'json',
+					data: {
+						type: 'markRead',
+						nid: ntf_id
+					},
+					success: function(data) {
+						$ntf_bl.removeClass('sn-ntf-unread');
+						$this.remove();
+					}
+				});
+			});
 
-                $.ajax({
-                    type: 'post',
-                    url: self.url,
-                    dataType: 'json',
-                    data: {
-                        type: 'delete',
-                        nid: ntf_id
-                    },
-                    success: function(data) {
-                        if (data.del) {
-                            $ntf_bl.remove();
-                            if ($('#sn-page-content').children('.sn-ntf-block').length === 0) {
-                                $('.sn-ntf-no-ntf').show();
-                            }
-                        }
-                    }
-                });
-            });
+			if (!$sn.allow_load) {
+				return;
+			}
+			self._sn_ntf_check(0);
+			$(document).everyTime(self.checkTime, self.timerName, function(i) {
+				self._sn_ntf_check(i);
+			});
+		},
+		_sn_ntf_check: function(i) {
+			var self = this;
+			if (i > 50) {
+				$(document).stopTime(self.timerName);
+				return false;
+			}
+			$.ajax({
+				type: 'POST',
+				url: self.url,
+				dataType: 'json',
+				success: function(data) {
+					if ($('#sn-ntf-cube') != null) {
+						self._sn_ntf_cubes('#sn-ntf-cube', '#sn-ntf-cube', data.cnt);
+					}
+					if ($('#sn-ntf-notify') != null) {
+						$('#sn-ntf-notify a').html(data.cnt + '');
+					}
 
-            $(document).on('click', '.sn-ntf-markRead', function() {
-                var $this = $(this);
-                var $ntf_bl = $(this).closest('.sn-ntf-block');
-                var ntf_id = $sn.getAttr($(this), 'ntf_id');
-
-                $.ajax({
-                    type: 'post',
-                    url: self.url,
-                    dataType: 'json',
-                    data: {
-                        type: 'markRead',
-                        nid: ntf_id
-                    },
-                    success: function(data) {
-                        $ntf_bl.removeClass('sn-ntf-unread');
-                        $this.remove();
-                    }
-                });
-            });
-
-            if (!$sn.allow_load) return;
-
-            self._sn_ntf_check(0);
-            $(document).everyTime(self.checkTime, self.timerName, function(i) {
-                self._sn_ntf_check(i);
-            });
-        },
-
-        _sn_ntf_check: function(i) {
-            var self = this;
-            if (i > 50) {
-                $(document).stopTime(self.timerName);
-                return false;
-            }
-            $.ajax({
-                type: 'POST',
-                url: self.url,
-                dataType: 'json',
-                success: function(data) {
-                    if ($('#sn-ntf-cube').length) {
-                        self._sn_ntf_cubes('#sn-ntf-cube', '#sn-ntf-cube', data.cnt);
-                    }
-                    if ($('#sn-ntf-notify').length) {
-                        $('#sn-ntf-notify a').html(data.cnt + '');
-                    }
-                    $.each(data.message, function(i, ntf) {
-                        $.jGrowl(ntf);
-                    });
-                }
-            });
-        },
-
-        _sn_ntf_cubes: function(s_obj, s_obj2, s_count) {
-            if (s_count == 0) {
-                $(s_obj).hide();
-            } else {
-                $(s_obj).show();
-                $(s_obj2).html(s_count + '');
-            }
-        }
-    };
+					$.each(data.message, function(i, ntf) {
+						$.jGrowl(ntf);
+					});
+				}
+			});
+		},
+		_sn_ntf_cubes: function(s_obj, s_obj2, s_count) {
+			if (s_count == 0) {
+				$(s_obj).hide();
+			} else {
+				$(s_obj).show();
+				$(s_obj2).html(s_count + '');
+			}
+		}
+	};
 }(jQuery, socialNetwork));
