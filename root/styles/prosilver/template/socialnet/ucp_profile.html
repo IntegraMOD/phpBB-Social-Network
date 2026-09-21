@@ -22,18 +22,40 @@
 						</select>
           </dd>
       	</dl>
-      	<dl>
-      		<dt><label for="interested_in">{L_SN_UP_INTERESTED_IN}:</label></dt>
-      		<dd>
-            <select name="interested_in" id="interested_in" style="width: 30%;">
-              <option value="0"<!-- IF INTERESTED_IN == '0' --> selected="selected"<!-- ENDIF -->></option>
+		<dl>
+			<dt><label for="interested_in">{L_SN_UP_INTERESTED_IN}:</label></dt>
+			<dd>
+			<select name="interested_in" id="interested_in" style="width: 30%;">
+			  <option value="0"<!-- IF INTERESTED_IN == '0' --> selected="selected"<!-- ENDIF -->></option>
 							<option value="1"<!-- IF INTERESTED_IN == '1' --> selected="selected"<!-- ENDIF -->>{L_SN_UP_MALES}</option>
 							<option value="2"<!-- IF INTERESTED_IN == '2' --> selected="selected"<!-- ENDIF -->>{L_SN_UP_FEMALES}</option>
 							<option value="3"<!-- IF INTERESTED_IN == '3' --> selected="selected"<!-- ENDIF -->>{L_SN_UP_BOTH}</option>
 						</select>
-          </dd>
-      	</dl>
-      	<dl>
+		  </dd>
+		</dl>
+		<dl>
+			<dt><label>{L_SN_UP_PRIVACY_LEVEL}:</label></dt>
+			<dd>
+				<!-- IF S_SN_ALLOW_PRIVACY_CHANGE -->
+				<label><input type="radio" name="privacy_level" value="2"<!-- IF SN_PRIVACY_LEVEL == 2 --> checked="checked"<!-- ENDIF --> /> {L_SN_UP_PRIVACY_PRIVATE}</label>
+				<label><input type="radio" name="privacy_level" value="1"<!-- IF SN_PRIVACY_LEVEL == 1 --> checked="checked"<!-- ENDIF --> /> {L_SN_UP_PRIVACY_FRIENDS}</label>
+				<label><input type="radio" name="privacy_level" value="0"<!-- IF SN_PRIVACY_LEVEL == 0 --> checked="checked"<!-- ENDIF --> /> {L_SN_UP_PRIVACY_DEFAULT}</label>
+				<!-- ELSE -->
+				<label><input type="radio" name="privacy_level" value="2"<!-- IF SN_PRIVACY_LEVEL == 2 --> checked="checked"<!-- ENDIF --> disabled="disabled" onclick="return false;" /> {L_SN_UP_PRIVACY_PRIVATE}</label>
+				<label><input type="radio" name="privacy_level" value="1"<!-- IF SN_PRIVACY_LEVEL == 1 --> checked="checked"<!-- ENDIF --> disabled="disabled" onclick="return false;" /> {L_SN_UP_PRIVACY_FRIENDS}</label>
+				<label><input type="radio" name="privacy_level" value="0"<!-- IF SN_PRIVACY_LEVEL == 0 --> checked="checked"<!-- ENDIF --> disabled="disabled" onclick="return false;" /> {L_SN_UP_PRIVACY_DEFAULT}</label>
+				<br /><span>{L_SN_UP_PRIVACY_LOCKED}</span>
+				<!-- ENDIF -->
+			</dd>
+		</dl>
+		<dl>
+			<dt><label>{L_SN_UP_ALLOW_FRIEND_REQUESTS}:</label></dt>
+			<dd>
+				<label><input type="radio" name="allow_friend_requests" value="1"<!-- IF SN_ALLOW_FRIEND_REQUESTS == 1 --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" name="allow_friend_requests" value="0"<!-- IF SN_ALLOW_FRIEND_REQUESTS == 0 --> checked="checked"<!-- ENDIF --> /> {L_NO}</label>
+			</dd>
+		</dl>
+		<dl>
       		<dt><label for="languages">{L_SN_UP_LANGUAGES}:</label></dt>
       		<dd><input type="text" name="languages" id="languages" value="{LANGUAGES}" class="inputbox" /></dd>
       	</dl>

@@ -2,7 +2,7 @@
 /**
  *
  * @package phpBB Social Network
- * @version 0.7.0
+ * @version 1.0.0
  * @copyright (c) phpBB Social Network Team 2010-2012 http://phpbbsocialnetwork.com
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -22,6 +22,7 @@ $lang = array_merge($lang, array(
 	/**
 	 * Edit these two lines write your own Welcome text for unregistered guests on Activity page.
 	 */
+	 
 	'SN_AP_WELCOME_TITLE'					 => 'Welcome to our website!',
 	'SN_AP_WELCOME_TEXT'					 => 'Feel free to register and use all of the features of our website.<br /><br />Greetings,<br />the Administrator',
 
@@ -78,7 +79,7 @@ $lang = array_merge($lang, array(
 	'SN_US_CHOOSE_THUMB'					 => 'images',
 	'SN_CB_FETCH_ERROR'						 => 'An error was encountered when fetching the web page',
 
-	'SN_AP_ACTIVITYPAGE'					 => 'Activity page',
+	'SN_AP_ACTIVITYPAGE'					 => 'My Network',
 	'SN_AP_AND'								 => 'and',
 	'SN_AP_ARE_FRIENDS'						 => 'are now friends',
 	'SN_AP_ADD_AS_FRIEND'					 => 'Add as a Friend',
@@ -141,6 +142,13 @@ $lang = array_merge($lang, array(
 	'SN_UP_HOMETOWN'						 => 'Hometown',
 	'SN_UP_SEX'								 => 'Sex',
 	'SN_UP_INTERESTED_IN'					 => 'Interested in',
+	'SN_UP_PRIVACY_LEVEL'					 => 'Privacy level',
+	'SN_UP_PRIVACY_PRIVATE'					 => 'Private (Admins only)',
+	'SN_UP_PRIVACY_FRIENDS'					 => 'Friends only',
+	'SN_UP_PRIVACY_DEFAULT'					 => 'Default (Everyone)',
+	'SN_UP_ALLOW_FRIEND_REQUESTS'			 => 'Allow members to send me friend requests',
+	'SN_UP_PRIVACY_LOCKED'					 => 'The board administrator does not allow members to change their privacy policy.',
+	'SN_UP_PRIVACY_DEFAULT_NOTICE'			 => 'The board default privacy policy is: <strong>%s</strong>.',
 	'SN_UP_LANGUAGES'						 => 'Languages',
 	'SN_UP_ABOUT_ME'						 => 'About me',
 	'SN_UP_EMPLOYER'						 => 'Employer',
@@ -163,6 +171,15 @@ $lang = array_merge($lang, array(
 	'SN_UP_FACEBOOK'						 => 'Facebook',
 	'SN_UP_TWITTER'							 => 'Twitter',
 	'SN_UP_YOUTUBE'							 => 'Youtube',
+	'SN_UP_USER_FB'							=> 'Facebook',
+	'SN_UP_USER_IG'							=> 'Instagram',
+	'SN_UP_USER_PT'							=> 'Pinterest',
+	'SN_UP_USER_TWR'						=> 'Twitter',
+	'SN_UP_USER_SKP'						=> 'Skype',
+	'SN_UP_USER_TG'							=> 'Telegram',
+	'SN_UP_USER_LI'							=> 'LinkedIn',
+	'SN_UP_USER_TT'							=> 'TikTok',
+	'SN_UP_USER_DC'							=> 'Discord',
 	'SN_UP_USER_ICQ'						 => 'ICQ number',
 	'SN_UP_USER_AIM'						 => 'AOL Instant Messenger',
 	'SN_UP_USER_MSNM'						 => 'WL/MSN Messenger',
@@ -324,6 +341,13 @@ $lang = array_merge($lang, array(
 	'SN_UP_TABS_SPINNER'					 => '<em>Loading&#8230;<\/em>',
 	'SN_UP_EMOTES'							 => 'Send Emote',
 
+    'SN_LIKED_POSTS'						 => 'Likes Received',
+	'SN_SEARCH_LIKED_POSTS'					 => 'Search user’s liked posts',
+	'SN_LIKES_SENT'         				 => 'Likes Sent',
+	'SN_SEARCH_LIKES_SENT'  				 => 'Search posts you liked',
+	
+	'SN_SEARCH_LIKED_POSTS'					 => 'Search user’s liked posts',
+	
 	'SN_UP_PROFILE_VALUE_DELETED'			 => '<em>Removed</em>',
 
 	'SN_NTF_EMOTE_CB_TITLE'					 => 'Emote sent',
@@ -583,4 +607,3 @@ $lang = array_merge($lang, array(
 	'BROWSER_OUTDATED'	 => 'Some of the features will not work on your browser. We highly recommend you to update it.',
 ));
 
-?>

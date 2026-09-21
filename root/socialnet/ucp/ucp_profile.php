@@ -2,7 +2,7 @@
 /**
  *
  * @package phpBB Social Network
- * @version 0.7.0
+ * @version 1.0.0
  * @copyright (c) phpBB Social Network Team 2010-2012 http://phpbbsocialnetwork.com
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -43,6 +43,8 @@ class ucp_profile
                     'hometown'			 => utf8_normalize_nfc(request_var('hometown', $row['hometown'], true)),
                     'sex'				 => request_var('sex', $row['sex']),
                     'interested_in'		 => request_var('interested_in', $row['interested_in']),
+                    'privacy_level'		 => request_var('privacy_level', isset($row['sn_privacy_level']) ? (int) $row['sn_privacy_level'] : (isset($config['sn_default_privacy_level']) ? (int) $config['sn_default_privacy_level'] : 1)),
+                    'allow_friend_requests' => request_var('allow_friend_requests', isset($row['sn_allow_friend_requests']) ? (int) $row['sn_allow_friend_requests'] : 1),
                     'languages'			 => utf8_normalize_nfc(request_var('languages', $row['languages'], true)),
                     'about_me'			 => utf8_normalize_nfc(request_var('about_me', $row['about_me'], true)),
                     'employer'			 => utf8_normalize_nfc(request_var('employer', $row['employer'], true)),
@@ -63,17 +65,22 @@ class ucp_profile
                     'facebook'			 => request_var('facebook', $row['facebook']),
                     'twitter'			 => request_var('twitter', $row['twitter']),
                     'youtube'			 => request_var('youtube', $row['youtube']),
-					// ajaxlike
-					'show_likes'				=> request_var('show_likes', $user->data['show_likes'], true),
-					'ajaxlike_list_in_profile'	=> (isset($config['ajaxlike_enable']) ? $config['ajaxlike_list_in_profile']: false),
-					// ajaxlike
                 );
 
                 // display settings
+                $sn_default_privacy_level = isset($config['sn_default_privacy_level']) ? (int) $config['sn_default_privacy_level'] : 1;
+                $sn_allow_privacy_change = (!isset($config['sn_allow_privacy_change']) || (int) $config['sn_allow_privacy_change'] === 1) ? true : false;
+                // When the admin has locked the setting the board default is the
+                // effective policy, so that is what the static radios must show.
+                $sn_display_privacy_level = $sn_allow_privacy_change ? (int) $data['privacy_level'] : $sn_default_privacy_level;
+
                 $template->assign_vars(array(
                     'HOMETOWN'			 => $data['hometown'],
                     'SEX'				 => $data['sex'],
                     'INTERESTED_IN'		 => $data['interested_in'],
+                    'SN_PRIVACY_LEVEL'	 => $sn_display_privacy_level,
+                    'SN_ALLOW_FRIEND_REQUESTS' => $data['allow_friend_requests'],
+                    'S_SN_ALLOW_PRIVACY_CHANGE' => $sn_allow_privacy_change,
                     'LANGUAGES'			 => $data['languages'],
                     'ABOUT_ME'			 => $data['about_me'],
                     'EMPLOYER'			 => $data['employer'],
@@ -97,6 +104,15 @@ class ucp_profile
                 ));
 
                 $submit = (isset($_POST['submit'])) ? true : false;
+
+                // If the board does not allow members to change their own privacy
+                // policy, ignore any posted value and keep the stored setting (or
+                // the board default when the user has none yet).
+                if (!isset($config['sn_allow_privacy_change']) || (int) $config['sn_allow_privacy_change'] !== 1) {
+                    $data['privacy_level'] = isset($row['sn_privacy_level'])
+                        ? (int) $row['sn_privacy_level']
+                        : (isset($config['sn_default_privacy_level']) ? (int) $config['sn_default_privacy_level'] : 1);
+                }
 
                 if ($submit) {
                     $validate_array = array(
@@ -127,6 +143,8 @@ class ucp_profile
                         'sport_teams'		 => array('string', true, 2, 1024),
                         'activities'		 => array('string', true, 2, 1024),
                         'skype'				 => array('string', true, 6, 32),
+                        'privacy_level'		 => array('num', false, 0, 2),
+                        'allow_friend_requests' => array('num', false, 0, 1),
                     );
 
                     $error = validate_data($data, $validate_array);
@@ -156,9 +174,8 @@ class ucp_profile
                         'facebook'			 => $data['facebook'],
                         'twitter'			 => $data['twitter'],
                         'youtube'			 => $data['youtube'],
-						// ajaxlike
-						'show_likes'		 => $data['show_likes'],
-						// ajaxlike
+                        'sn_privacy_level' => (int) $data['privacy_level'],
+                        'sn_allow_friend_requests' => (int) $data['allow_friend_requests'],
                     ));
 
                     if (!sizeof($error)) {
@@ -521,7 +538,9 @@ class ucp_profile
                         $db->sql_freeresult($result);
 
                         if (sizeof($error)) {
-                            $error = preg_replace('#^([A-Z_]+)$#e', "(!empty(\$user->lang['\\1'])) ? \$user->lang['\\1'] : '\\1'", (string) $error);
+                            $error = preg_replace_callback('#^([A-Z_]+)$#', function($matches) use ($user) {
+                                return (!empty($user->lang[$matches[1]])) ? $user->lang[$matches[1]] : $matches[1];
+                            }, (string) $error);
                         }
 
                         $template->assign_vars(array(
@@ -580,10 +599,6 @@ class ucp_profile
             'S_REL_AVATAR'		 => $socialnet->get_user_avatar_resized($row['user_avatar'], $row['user_avatar_type'], $row['user_avatar_width'], $row['user_avatar_height'], 50),
             'S_REL_USERNAME'	 => $socialnet->get_username_string($socialnet->config['us_colour_username'], 'full', $row['user_id'], $row['username'], $row['user_colour']),
             'U_REL_PROFILE_LINK' => $socialnet->get_username_string($socialnet->config['us_colour_username'], 'profile', $row['user_id'], $row['username'], $row['user_colour']),
-			// ajaxlike
-			'S_SHOW_LIKES'			=> $data['show_likes'],
-			'S_AJ_LIST_IN_PROFILE'	=> $data['ajaxlike_list_in_profile'],
-			// ajaxlike
        ));
 
         // Approve / Refuse relation

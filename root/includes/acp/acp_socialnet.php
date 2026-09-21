@@ -2,7 +2,7 @@
 /**
  *
  * @package phpBB Social Network
- * @version 0.8.0
+ * @version 1.0.0
  * @copyright (c) phpBB Social Network Team 2010-2012 http://phpbbsocialnetwork.com
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -214,7 +214,7 @@ class acp_socialnet extends AddOnsHookSystem
             'B_ACP_SN_MAIN'	 => true
         ));
 
-        $socialnet->_version_checker(array('host' => 'update.phpbb3hacks.com', 'directory' => '/socialnet', 'filename' => 'sn_modules.xml'));
+        $socialnet->_version_checker(array('host' => 'integramod.com', 'directory' => '/version', 'filename' => 'sn_modules.xml'));
         $this->acpPanel_explain = $user->lang['ACP_SN_WELCOME_TEXT'];
     }
 
@@ -625,6 +625,33 @@ class acp_socialnet extends AddOnsHookSystem
         if (!$is_dynamic) {
             $cache->destroy('config');
         }
+    }
+
+    /**
+     * Build the <option> list for the SocialNet default privacy level select box.
+     * Privacy levels: 0 = Default (everyone), 1 = Friends only, 2 = Private (Admins only).
+     * @param mixed $selected Currently selected config value
+     * @param string $key Field id (unused, kept for build_cfg_template signature)
+     * @return string HTML option tags
+     */
+    public function sn_select_privacy_level($selected, $key = '')
+    {
+        global $user;
+
+        $selected = (int) $selected;
+
+        $options = array(
+            0 => isset($user->lang['SN_UP_PRIVACY_DEFAULT']) ? $user->lang['SN_UP_PRIVACY_DEFAULT'] : 'Default (Everyone)',
+            1 => isset($user->lang['SN_UP_PRIVACY_FRIENDS']) ? $user->lang['SN_UP_PRIVACY_FRIENDS'] : 'Friends only',
+            2 => isset($user->lang['SN_UP_PRIVACY_PRIVATE']) ? $user->lang['SN_UP_PRIVACY_PRIVATE'] : 'Private (Admins only)',
+        );
+
+        $tpl = '';
+        foreach ($options as $value => $title) {
+            $tpl .= '<option value="' . $value . '"' . (($value === $selected) ? ' selected="selected"' : '') . '>' . $title . '</option>';
+        }
+
+        return $tpl;
     }
 }
 
@@ -1213,7 +1240,7 @@ class AddOnsHookSystem
         $dir = @opendir($template_dir);
         $available_template_dir = false;
         if (!$dir) {
-            $template_dir = "{$phpbb_root_path}styles/prosilver/template/{$template_short_dir}";
+            $template_dir = "{$phpbb_root_path}styles/_portal_common/template/{$template_short_dir}";
             $dir = opendir($template_dir);
             $available_template_dir = true;
         }
@@ -1231,8 +1258,8 @@ class AddOnsHookSystem
         $template->assign_vars(array(
             'SN_ADDON_TEMPLATE_FOLDER'				 => $template_dir,
             'SN_ADDON_TEMPLATE_SH_FOLDER'			 => $template_short_dir,
-            'B_SN_ADDON_TEPLATE_FOLDER_NOT_EXIST'	 => $available_template_dir,
-            'L_SN_ADDON_TEMPLATE_FOLDER_NOT_EXIST'	 => sprintf($user->lang['SN_ADDON_TEMPLATE_FOLDER_NOT_EXIST'], $user->theme['theme_name']),
+            'B_SN_ADDON_TEPLATE_FOLDER_NOT_EXIST'	 => $available_template_dir
+//           'L_SN_ADDON_TEMPLATE_FOLDER_NOT_EXIST'	 => sprintf($user->lang['SN_ADDON_TEMPLATE_FOLDER_NOT_EXIST'], $user->theme['theme_name']),
         ));
 
         return $templates;
